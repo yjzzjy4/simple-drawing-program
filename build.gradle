@@ -10,6 +10,11 @@ group 'io.aaron.learning'
 version '1.0-SNAPSHOT'
 
 repositories {
+    // 配置阿里maven源
+    maven {
+        url 'https://maven.aliyun.com/repository/public/'
+    }
+    mavenLocal()
     mavenCentral()
 }
 
