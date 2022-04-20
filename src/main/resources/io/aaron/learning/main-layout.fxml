@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import io.aaron.learning.scene.CanvasWrapper?>
+<?import java.awt.Canvas?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:id="root" fx:controller="io.aaron.learning.MainController">
+    <top>
+        <VBox>
+            <MenuBar fx:id="menubar" style="-fx-background-color: #fff"/>
+            <HBox fx:id="shortcuts" style="-fx-background-color: #000"/>
+        </VBox>
+    </top>
+    <left>
+        <ScrollPane fx:id="shapePickerScroll">
+            <FlowPane fx:id="shapePicker"/>
+        </ScrollPane>
+    </left>
+    <right>
+        <ScrollPane fx:id="propEditorScroll">
+            <FlowPane fx:id="propEditor"/>
+        </ScrollPane>
+    </right>
+    <center>
+        <ScrollPane fx:id="canvasScroll">
+            <CanvasWrapper fx:id="canvas" width="720" height="1024"/>
+        </ScrollPane>
+    </center>
+</BorderPane>

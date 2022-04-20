@@ -34,6 +34,8 @@ dependencies {
     implementation 'com.jfoenix:jfoenix:9.0.10'
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    // icon packs;
+    implementation 'org.kordamp.ikonli:ikonli-devicons-pack:12.3.1'
 }
 
 test {
