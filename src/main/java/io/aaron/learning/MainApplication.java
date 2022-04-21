@@ -30,7 +30,7 @@ public class MainApplication extends Application {
         flowPane.setStyle("-fx-background-color: green");
         List<Button> list = new ArrayList<>();
         Random random = new Random();
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             Button btn = new Button();
             btn.setGraphic(new FontIcon("di-java:32"));
 //            btn.setPrefSize(50, 50);
@@ -50,6 +50,8 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
 
         stage.setTitle("Simple Drawing Practice");
+        stage.setX(0);
+        stage.setY(0);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();

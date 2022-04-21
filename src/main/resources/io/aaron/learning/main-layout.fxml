@@ -8,13 +8,14 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import io.aaron.learning.scene.CanvasWrapper?>
 <?import java.awt.Canvas?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="root" fx:controller="io.aaron.learning.MainController">
     <top>
         <VBox>
             <MenuBar fx:id="menubar" style="-fx-background-color: #fff"/>
-            <HBox fx:id="shortcuts" style="-fx-background-color: #000"/>
+            <HBox fx:id="shortcuts" style="-fx-background-color: lightgray"/>
         </VBox>
     </top>
     <left>
@@ -24,12 +25,12 @@
     </left>
     <right>
         <ScrollPane fx:id="propEditorScroll">
-            <FlowPane fx:id="propEditor"/>
+            <CanvasWrapper fx:id="canvas" width="720" height="1024"/>
         </ScrollPane>
     </right>
     <center>
         <ScrollPane fx:id="canvasScroll">
-            <CanvasWrapper fx:id="canvas" width="720" height="1024"/>
+            <FlowPane fx:id="propEditor"/>
         </ScrollPane>
     </center>
 </BorderPane>

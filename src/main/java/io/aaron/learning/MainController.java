@@ -2,18 +2,14 @@ package io.aaron.learning;
 
 import io.aaron.learning.geom.impl.Rectangle;
 import io.aaron.learning.scene.CanvasWrapper;
-import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class MainController {
@@ -45,16 +41,14 @@ public class MainController {
     public CanvasWrapper canvas;
 
     public void initialize() {
-        menubar.getMenus().addAll(new Menu("File"), new Menu("Edit"), new Menu("View"), new Menu("Arrange"));
-
-        shortcuts.setPrefHeight(30);
+        initMenu();
 
         // 左侧边栏;
         shapePickerScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.15));
         shapePickerScroll.setMinViewportWidth(100);
         shapePicker.prefWidthProperty().bind(shapePickerScroll.prefViewportWidthProperty());
-        Button button = new Button();
-        button.setGraphic(new FontIcon("di-java:32"));
+        Button button = new Button("rectangle");
+        button.setGraphic(new FontIcon("gmi-dashboard-customize:32"));
         button.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
                 Rectangle rectangle = new Rectangle();
@@ -64,12 +58,26 @@ public class MainController {
         shapePicker.getChildren().add(button);
 
         // 画板区域;
+        canvasScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.65));
         canvasScroll.setMinViewportWidth(600);
 
         // 右侧边栏;
         propEditorScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.2));
         propEditorScroll.setMinViewportWidth(100);
-        propEditor.prefWidthProperty().bind(propEditorScroll.prefViewportWidthProperty());
+        propEditor.prefWidthProperty().bind(canvasScroll.prefViewportWidthProperty());
         propEditor.setOrientation(Orientation.HORIZONTAL);
+    }
+
+    private void initMenu() {
+        menubar.getMenus().addAll(new Menu("File"),
+                new Menu("Edit") {{
+                    getItems().add(new MenuItem("Clear") {{
+                        setOnAction(event -> propEditor.getChildren().clear());
+                    }});
+                }},
+                new Menu("View"),
+                new Menu("Arrange"));
+
+        shortcuts.setPrefHeight(30);
     }
 }
