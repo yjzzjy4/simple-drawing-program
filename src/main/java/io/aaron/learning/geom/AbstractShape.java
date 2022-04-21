@@ -1,7 +1,8 @@
 package io.aaron.learning.geom;
 
-import io.aaron.learning.geom.impl.Rectangle;
-import javafx.scene.Node;
+import io.aaron.learning.geom.impl.RectangleWrapper;
+import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import lombok.AllArgsConstructor;
@@ -23,9 +24,7 @@ public abstract class AbstractShape {
     private Boolean filled;
     private Color strokeColor;
     private Color fillColor;
-    // TO DO: how to describe bounds and anchors?
-//    private Rectangle bounds;
-//    private final Map<String, Circle> anchors;
+    private Bounds bounds;
 
     {
         rotation = 0.0;
@@ -46,7 +45,7 @@ public abstract class AbstractShape {
         this.height = height;
     }
 
-    public Rectangle getBounds() {
+    public RectangleWrapper getBounds() {
         return null;
     }
 
@@ -54,5 +53,5 @@ public abstract class AbstractShape {
         return false;
     }
 
-    public abstract void paint(Canvas canvas, double x, double y);
+    public abstract void paint(Group group, double x, double y);
 }

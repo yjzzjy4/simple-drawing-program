@@ -1,8 +1,9 @@
 package io.aaron.learning;
 
-import io.aaron.learning.geom.impl.Rectangle;
-import io.aaron.learning.scene.CanvasWrapper;
+import io.aaron.learning.geom.impl.RectangleImage;
+import io.aaron.learning.geom.impl.RectangleWrapper;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -38,8 +39,8 @@ public class MainController {
     @FXML
     public ScrollPane canvasScroll;
 
-    @FXML
-    public CanvasWrapper canvas;
+//    @FXML
+//    public CanvasWrapper canvas;
 
     public void initialize() {
         menubar.getMenus().addAll(new Menu("File"), new Menu("Edit"), new Menu("View"), new Menu("Arrange"));
@@ -54,12 +55,14 @@ public class MainController {
         button.setGraphic(new FontIcon("di-java:32"));
         button.setOnAction(value -> {
             // wrong approach...
-            Rectangle rectangle = new Rectangle();
+            RectangleImage rectangle = new RectangleImage();
             Double offsetX = rectangle.getWidth() / 2;
             Double offsetY = rectangle.getHeight() / 2;
             Double centerX = canvasScroll.widthProperty().divide(2).doubleValue();
             Double centerY = canvasScroll.heightProperty().divide(2).doubleValue();
-            rectangle.paint(canvas, centerX - offsetX, centerY - offsetY);
+            Group g = new Group();
+            rectangle.paint(g, centerX - offsetX, centerY - offsetY);
+            canvasScroll.setContent(g);
             rectangle.setX(0.0);
             rectangle.setY(0.0);
             // Should get it done this way...

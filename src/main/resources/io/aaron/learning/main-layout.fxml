@@ -29,7 +29,7 @@
     </right>
     <center>
         <ScrollPane fx:id="canvasScroll">
-            <CanvasWrapper fx:id="canvas" width="720" height="1024"/>
+<!--            <CanvasWrapper fx:id="canvas" width="720" height="1024"/>-->
         </ScrollPane>
     </center>
 </BorderPane>
