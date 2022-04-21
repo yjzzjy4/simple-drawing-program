@@ -1,5 +1,6 @@
 package io.aaron.learning;
 
+import io.aaron.learning.geom.impl.Circle;
 import io.aaron.learning.geom.impl.Rectangle;
 import io.aaron.learning.scene.CanvasWrapper;
 import javafx.fxml.FXML;
@@ -9,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class MainController {
@@ -56,6 +56,15 @@ public class MainController {
             }
         });
         shapePicker.getChildren().add(button);
+        Button buttonCircle = new Button("circle");
+        buttonCircle.setGraphic(new FontIcon("gmi-dashboard-customize:32"));
+        buttonCircle.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
+                Circle circle = new Circle();
+                propEditor.getChildren().add(circle.provide());
+            }
+        });
+        shapePicker.getChildren().add(buttonCircle);
 
         // 画板区域;
         canvasScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.65));
