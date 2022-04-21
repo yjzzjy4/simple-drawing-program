@@ -91,7 +91,7 @@ public abstract class AbstractShape implements MouseEventAccessible {
             }
         });
 
-        addMouseEventHandler();
+        addMouseEventHandler(container);
     }
 
 
@@ -103,7 +103,6 @@ public abstract class AbstractShape implements MouseEventAccessible {
 
     public abstract boolean contains(double x, double y);
 
-    @Override
     public void setMouseEventHandler(EventHandler<? super MouseEvent> handler) {
         getContainer().setOnMouseDragged(handler);
         getContainer().setOnMouseEntered(handler);

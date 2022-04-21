@@ -1,6 +1,8 @@
 package io.aaron.learning.geom.operate.base;
 
 import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -9,18 +11,18 @@ import javafx.scene.input.MouseEvent;
  */
 public interface MouseEventAccessible {
 
-    void setMouseEventHandler(EventHandler<? super MouseEvent> value);
-
     /**
      * example:
      * <pre>
-     * public void addMouseEventHandler() {
-     *     getContainer().addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-     *         System.out.println("hello");
+     * public void addMouseEventHandler(Node node) {
+     *     node.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+     *         System.out.println("hello, world");
      *     });
      * }
      * </pre>
+     *
+     * @param node the node that mouse event handler will be registered in.
      */
-    default void addMouseEventHandler() {
+    default void addMouseEventHandler(Node node) {
     }
 }

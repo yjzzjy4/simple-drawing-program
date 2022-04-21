@@ -1,7 +1,7 @@
 package io.aaron.learning.geom.impl;
 
 import io.aaron.learning.geom.AbstractShape;
-import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -53,5 +53,10 @@ public class Rectangle extends AbstractShape {
     @Override
     public boolean contains(double x, double y) {
         return false;
+    }
+
+    @Override
+    public void addMouseEventHandler(Node node) {
+        node.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> System.out.println("hello, world"));
     }
 }
