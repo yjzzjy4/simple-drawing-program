@@ -6,35 +6,38 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
-@ToString
 @EqualsAndHashCode(callSuper = true)
-public class RectangleImage extends AbstractShape {
-    private Boolean square;
+public class OvalImage extends AbstractShape {
+    private Boolean circle;
     private Canvas canvas;
 
-    public RectangleImage() {
+    public OvalImage() {
         this(false);
     }
 
-    public RectangleImage(Boolean square) {
-        super();
-        this.square = square;
-        init(square);
+    public OvalImage(Boolean circle) {
+        this.circle = circle;
+        init(circle);
     }
 
-    public RectangleImage(Double x, Double y, Double width, Double height) {
-        super(x, y, width, height);
-        this.square = false;
+    public OvalImage(Double diameter) {
+        super(diameter, diameter);
+        this.circle = true;
         super.encapsulateShape();
     }
 
-    private void init(Boolean square) {
-        if(square) {
+    public OvalImage(Double x, Double y, Double width, Double height) {
+        super(x, y, width, height);
+        this.circle = false;
+        super.encapsulateShape();
+    }
+
+    private void init(Boolean circle) {
+        if(circle) {
             setWidth(80.0);
             setHeight(80.0);
         }
@@ -52,15 +55,10 @@ public class RectangleImage extends AbstractShape {
         context.setFill(getFill());
         context.setStroke(getStroke());
         if(getFilled()) {
-            context.fillRect(0, 0, getWidth(), getHeight());
+            context.fillOval(0, 0, getWidth(), getHeight());
         }
-        context.strokeRect(0, 0, getWidth(), getHeight());
+        context.strokeOval(0, 0, getWidth(), getHeight());
         this.canvas = canvas;
         return canvas;
-    }
-
-    @Override
-    public boolean contains(double x, double y) {
-        return super.contains(x, y);
     }
 }

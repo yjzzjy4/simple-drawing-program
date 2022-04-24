@@ -1,9 +1,9 @@
 package io.aaron.learning;
 
+import io.aaron.learning.geom.impl.OvalImage;
 import io.aaron.learning.geom.impl.RectangleImage;
-import io.aaron.learning.geom.impl.RectangleWrapper;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -11,35 +11,38 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.Pane;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class MainController {
     @FXML
-    public BorderPane root;
+    private BorderPane root;
 
     @FXML
-    public MenuBar menubar;
+    private MenuBar menubar;
 
     @FXML
-    public HBox shortcuts;
+    private HBox shortcuts;
 
     @FXML
-    public ScrollPane shapePickerScroll;
+    private ScrollPane shapePickerScroll;
 
     @FXML
-    public FlowPane shapePicker;
+    private FlowPane shapePicker;
 
     @FXML
-    public ScrollPane propEditorScroll;
+    private ScrollPane propEditorScroll;
 
     @FXML
-    public FlowPane propEditor;
+    private FlowPane propEditor;
 
     @FXML
-    public ScrollPane canvasScroll;
+    private ScrollPane canvasScroll;
 
-//    @FXML
+    @FXML
+    private Pane canvas;
+
+    //    @FXML
 //    public CanvasWrapper canvas;
 
     public void initialize() {
@@ -51,29 +54,41 @@ public class MainController {
         shapePickerScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.15));
         shapePickerScroll.setMinViewportWidth(100);
         shapePicker.prefWidthProperty().bind(shapePickerScroll.prefViewportWidthProperty());
-        Button button = new Button();
-        button.setGraphic(new FontIcon("di-java:32"));
-        button.setOnAction(value -> {
-            // wrong approach...
+        Button drawRect = new Button();
+        drawRect.setGraphic(new FontIcon("di-java:32"));
+        drawRect.setOnAction(value -> {
             RectangleImage rectangle = new RectangleImage();
             Double offsetX = rectangle.getWidth() / 2;
             Double offsetY = rectangle.getHeight() / 2;
             Double centerX = canvasScroll.widthProperty().divide(2).doubleValue();
             Double centerY = canvasScroll.heightProperty().divide(2).doubleValue();
-            Group g = new Group();
-            rectangle.paint(g, centerX - offsetX, centerY - offsetY);
-            canvasScroll.setContent(g);
-            rectangle.setX(0.0);
-            rectangle.setY(0.0);
-            // Should get it done this way...
-            javafx.scene.shape.Rectangle rec = new javafx.scene.shape.Rectangle(120, 60);
-            rec.setStroke(Color.web("#000"));
-            rec.setFill(Color.web("#fff"));
-            propEditor.getChildren().addAll(rec);
+            Node node = rectangle.getContainer();
+            node.setLayoutX(centerX - offsetX);
+            node.setLayoutY(centerY - offsetY);
+            System.out.println(node);
+            canvas.getChildren().add(node);
+
         });
-        shapePicker.getChildren().add(button);
+        Button drawCircle = new Button();
+        drawCircle.setGraphic(new FontIcon("di-java:32"));
+        drawCircle.setOnAction(value -> {
+            OvalImage circle = new OvalImage();
+            Double offsetX = circle.getWidth() / 2;
+            Double offsetY = circle.getHeight() / 2;
+            Double centerX = canvasScroll.widthProperty().divide(2).doubleValue();
+            Double centerY = canvasScroll.heightProperty().divide(2).doubleValue();
+            Node node = circle.getContainer();
+            node.setLayoutX(centerX - offsetX);
+            node.setLayoutY(centerY - offsetY);
+            System.out.println(node);
+            canvas.getChildren().add(node);
+        });
+        shapePicker.getChildren().addAll(drawRect, drawCircle);
 
         // 画板区域;
+//        canvas.setStyle("-fx-background-color: #000");
+        canvas.prefWidthProperty().bind(canvasScroll.widthProperty());
+        canvas.prefHeightProperty().bind(canvasScroll.heightProperty());
         canvasScroll.setMinViewportWidth(600);
 
         // 右侧边栏;
