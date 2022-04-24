@@ -4,7 +4,6 @@ import io.aaron.learning.geom.impl.BoundsPoint;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -12,8 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
-
-import javax.swing.event.HyperlinkEvent;
 
 @Data
 @SuperBuilder
@@ -64,7 +61,7 @@ public abstract class AbstractShape {
         container.getChildren().addAll(shape);
 
         // get bounds;
-        if(!(this instanceof BoundsImage) && !(this instanceof BoundsPoint)) {
+        if (!(this instanceof BoundsImage) && !(this instanceof BoundsPoint)) {
             bounds = BoundsImage.fromShape(this);
         }
 
@@ -79,7 +76,7 @@ public abstract class AbstractShape {
 
         // drag;
         container.setOnMouseDragged(event -> {
-            if(event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
                 container.translateXProperty().set(container.getTranslateX() + event.getX() - getWidth() / 2);
                 container.translateYProperty().set(container.getTranslateY() + event.getY() - getHeight() / 2);
             }
@@ -87,12 +84,11 @@ public abstract class AbstractShape {
 
         // show bounds with handlers;
         container.setOnMouseClicked(event -> {
-            if(event.getButton() == MouseButton.PRIMARY) {
+            if (event.getButton() == MouseButton.PRIMARY) {
                 selected = !selected;
-                if(selected) {
+                if (selected) {
                     bounds.showWithHandlers();
-                }
-                else {
+                } else {
                     bounds.hideHandlers();
                 }
             }

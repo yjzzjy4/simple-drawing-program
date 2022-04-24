@@ -8,13 +8,16 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import lombok.experimental.SuperBuilder;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuperBuilder
 public class BoundsImage extends RectangleImage {
     private AbstractShape parent;
     private final Map<Handler, BoundsPoint> handlers = new HashMap<>();
+    private final Double POINT_RADIUS = 5.0;
 
     public enum Handler {
         TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, TOP_LEFT
@@ -28,8 +31,14 @@ public class BoundsImage extends RectangleImage {
     private void bindHandlerPosition(Handler handler, double offsetX, double offsetY) {
         BoundsPoint boundsPoint = handlers.get(handler);
         Canvas canvas = boundsPoint.getCanvas();
-        canvas.layoutXProperty().bind(parent.getContainer().layoutXProperty().add(offsetX));
-        canvas.layoutXProperty().bind(parent.getContainer().layoutYProperty().add(offsetY));
+        canvas.layoutXProperty().bind(parent.getContainer().layoutXProperty()
+                .subtract(parent.getContainer().layoutXProperty()
+                        .subtract(offsetX)
+                        .add(POINT_RADIUS)));
+        canvas.layoutYProperty().bind(parent.getContainer().layoutYProperty()
+                .subtract(parent.getContainer().layoutYProperty()
+                        .subtract(offsetY)
+                        .add(POINT_RADIUS)));
     }
 
     // TODO: bind anchors to bounds;
@@ -73,15 +82,15 @@ public class BoundsImage extends RectangleImage {
 
     public static BoundsImage fromShape(AbstractShape shape) {
         BoundsImage bounds = BoundsImage.builder()
-                                        .parent(shape)
-                                        .x(shape.getX())
-                                        .y(shape.getY())
-                                        .width(shape.getWidth())
-                                        .height(shape.getHeight())
-                                        .square(false)
-                                        .filled(false)
-                                        .stroke(Color.LIGHTBLUE)
-                                        .build();
+                .parent(shape)
+                .x(shape.getX())
+                .y(shape.getY())
+                .width(shape.getWidth())
+                .height(shape.getHeight())
+                .square(false)
+                .filled(false)
+                .stroke(Color.LIGHTBLUE)
+                .build();
         bounds.init();
         return bounds;
     }
