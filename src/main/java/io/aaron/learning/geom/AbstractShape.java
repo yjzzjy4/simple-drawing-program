@@ -1,6 +1,7 @@
 package io.aaron.learning.geom;
 
 import io.aaron.learning.geom.impl.BoundsPoint;
+import io.aaron.learning.scene.ShapeHolder;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -65,15 +66,6 @@ public abstract class AbstractShape {
             bounds = BoundsImage.fromShape(this);
         }
 
-        // show bounds;
-        container.setOnMouseEntered(event -> {
-            bounds.show();
-        });
-
-        container.setOnMouseExited(event -> {
-            bounds.hide();
-        });
-
         // drag;
         container.setOnMouseDragged(event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
@@ -85,17 +77,36 @@ public abstract class AbstractShape {
         // show bounds with handlers;
         container.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                selected = !selected;
-                if (selected) {
-                    bounds.showWithHandlers();
-                } else {
-                    bounds.hideHandlers();
+                // ctrl key can unselect a shape;
+                if(event.isControlDown()) {
+                    selected = !selected;
+                    if(selected) {
+                        bounds.show();
+                    }
+                    else {
+                        bounds.hide();
+                    }
+                    return;
                 }
+                ShapeHolder.getAllShapes().forEach(shapeWithin -> {
+                    if(!bounds.equals(shapeWithin.getBounds())) {
+                        shapeWithin.setSelected(false);
+                        shapeWithin.getBounds().hide();
+                    }
+                });
+                if(!selected) {
+                    bounds.show();
+                }
+                selected = true;
             }
         });
     }
 
     public abstract Node draw();
+
+    public void applyChange() {
+        draw();
+    }
 
     public boolean contains(double x, double y) {
         return false;

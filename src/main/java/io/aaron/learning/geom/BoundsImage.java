@@ -64,19 +64,13 @@ public class BoundsImage extends RectangleImage {
 
     public void show() {
         parent.getContainer().getChildren().add(draw());
+        List<Node> nodes = handlers.values().stream().map(BoundsPoint::getCanvas).collect(Collectors.toList());
+        parent.getContainer().getChildren().addAll(nodes);
     }
 
     public void hide() {
         parent.getContainer().getChildren().remove(getCanvas());
-    }
-
-    public void showWithHandlers() {
-        List<Node> nodes = handlers.values().stream().map(OvalImage::getCanvas).collect(Collectors.toList());
-        parent.getContainer().getChildren().addAll(nodes);
-    }
-
-    public void hideHandlers() {
-        List<Node> nodes = handlers.values().stream().map(OvalImage::getCanvas).collect(Collectors.toList());
+        List<Node> nodes = handlers.values().stream().map(BoundsPoint::getCanvas).collect(Collectors.toList());
         parent.getContainer().getChildren().removeAll(nodes);
     }
 
@@ -89,7 +83,8 @@ public class BoundsImage extends RectangleImage {
                 .height(shape.getHeight())
                 .square(false)
                 .filled(false)
-                .stroke(Color.LIGHTBLUE)
+                .stroke(Color.web("#00b8f0"))
+                .fill(Color.web("#00b8f0"))
                 .build();
         bounds.init();
         return bounds;

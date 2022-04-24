@@ -2,6 +2,7 @@ package io.aaron.learning;
 
 import io.aaron.learning.geom.impl.OvalImage;
 import io.aaron.learning.geom.impl.RectangleImage;
+import io.aaron.learning.scene.ShapeHolder;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -43,7 +44,7 @@ public class MainController {
     private Pane canvas;
 
     //    @FXML
-//    public CanvasWrapper canvas;
+//    public ShapeHolder canvas;
 
     public void initialize() {
         menubar.getMenus().addAll(new Menu("File"), new Menu("Edit"), new Menu("View"), new Menu("Arrange"));
@@ -65,7 +66,7 @@ public class MainController {
             Node node = rectangle.getContainer();
             node.setLayoutX(centerX - offsetX);
             node.setLayoutY(centerY - offsetY);
-            System.out.println(node);
+            ShapeHolder.add(rectangle);
             canvas.getChildren().add(node);
 
         });
@@ -80,7 +81,7 @@ public class MainController {
             Node node = circle.getContainer();
             node.setLayoutX(centerX - offsetX);
             node.setLayoutY(centerY - offsetY);
-            System.out.println(node);
+            ShapeHolder.add(circle);
             canvas.getChildren().add(node);
         });
         shapePicker.getChildren().addAll(drawRect, drawCircle);

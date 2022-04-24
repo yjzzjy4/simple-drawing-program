@@ -47,7 +47,9 @@ public class RectangleImage extends AbstractShape {
 
     @Override
     public Node draw() {
-        Canvas canvas = new Canvas(getWidth() + 2, getHeight() + 2);
+        if(canvas == null) {
+            canvas = new Canvas(getWidth() + 2, getHeight() + 2);
+        }
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.setFill(getFill());
         context.setStroke(getStroke());
@@ -55,7 +57,6 @@ public class RectangleImage extends AbstractShape {
             context.fillRect(0, 0, getWidth(), getHeight());
         }
         context.strokeRect(0, 0, getWidth(), getHeight());
-        this.canvas = canvas;
         return canvas;
     }
 
