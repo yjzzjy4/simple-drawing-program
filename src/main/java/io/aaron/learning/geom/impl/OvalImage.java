@@ -13,7 +13,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class OvalImage extends AbstractShape {
     private Boolean circle;
-    private Canvas canvas;
 
     public OvalImage() {
         this(false);
@@ -50,10 +49,17 @@ public class OvalImage extends AbstractShape {
 
     @Override
     public Node draw() {
+        Canvas canvas = getCanvas();
         if(canvas == null) {
-            canvas = new Canvas(getWidth() + 2, getHeight() + 2);
+            setCanvas(new Canvas(getWidth() + 2, getHeight() + 2));
+            canvas = getCanvas();
+        }
+        else {
+            canvas.setHeight(getHeight() + 2);
+            canvas.setWidth(getWidth() + 2);
         }
         GraphicsContext context = canvas.getGraphicsContext2D();
+        context.clearRect(0, 0, getWidth() + 2, getHeight() + 2);
         context.setFill(getFill());
         context.setStroke(getStroke());
         if(getFilled()) {

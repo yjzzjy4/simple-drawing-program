@@ -4,6 +4,7 @@ import io.aaron.learning.geom.impl.BoundsPoint;
 import io.aaron.learning.scene.ShapeHolder;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -30,6 +31,7 @@ public abstract class AbstractShape {
     private Paint fill;
     private BoundsImage bounds;
     private Group container;
+    private Canvas canvas;
     private Double strokeWidth;
     private String strokeType;
 
@@ -59,7 +61,7 @@ public abstract class AbstractShape {
 
     protected final void encapsulateShape() {
         Node shape = draw();
-        container.getChildren().addAll(shape);
+        container.getChildren().add(shape);
 
         // get bounds;
         if (!(this instanceof BoundsImage) && !(this instanceof BoundsPoint)) {
@@ -68,7 +70,7 @@ public abstract class AbstractShape {
 
         // drag;
         container.setOnMouseDragged(event -> {
-            if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            if (event.getTarget() == container && event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
                 container.translateXProperty().set(container.getTranslateX() + event.getX() - getWidth() / 2);
                 container.translateYProperty().set(container.getTranslateY() + event.getY() - getHeight() / 2);
             }
