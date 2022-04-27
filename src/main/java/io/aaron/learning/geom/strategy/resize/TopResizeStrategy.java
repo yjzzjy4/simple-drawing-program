@@ -1,7 +1,7 @@
 package io.aaron.learning.geom.strategy.resize;
 
 import io.aaron.learning.geom.BoundsImage;
-import io.aaron.learning.geom.strategy.resize.base.VerticalResize;
+import io.aaron.learning.geom.strategy.resize.base.VerticalResizeStrategy;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
  * @author lishuang
  * @since 2022/04/27 11:29:45
  */
-public class TopResize implements VerticalResize {
+public class TopResizeStrategy implements VerticalResizeStrategy {
     @Override
     public EventHandler<? super MouseEvent> handle(BoundsImage bounds) {
         return event -> {

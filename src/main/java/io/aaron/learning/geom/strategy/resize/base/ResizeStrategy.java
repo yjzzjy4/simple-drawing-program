@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent;
  * @author lishuang
  * @since 2022/04/27 13:54:35
  */
-public interface Resize {
+public interface ResizeStrategy {
     EventHandler<? super MouseEvent> handle(BoundsImage bounds);
 
     default void resize(BoundsImage bounds, Double height) {

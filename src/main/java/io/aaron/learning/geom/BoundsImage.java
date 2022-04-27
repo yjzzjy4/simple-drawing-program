@@ -2,10 +2,10 @@ package io.aaron.learning.geom;
 
 import io.aaron.learning.geom.impl.BoundsPoint;
 import io.aaron.learning.geom.impl.RectangleImage;
-import io.aaron.learning.geom.strategy.resize.BottomResize;
-import io.aaron.learning.geom.strategy.resize.LeftResize;
-import io.aaron.learning.geom.strategy.resize.RightResize;
-import io.aaron.learning.geom.strategy.resize.TopResize;
+import io.aaron.learning.geom.strategy.resize.BottomResizeStrategy;
+import io.aaron.learning.geom.strategy.resize.LeftResizeStrategy;
+import io.aaron.learning.geom.strategy.resize.RightResizeStrategy;
+import io.aaron.learning.geom.strategy.resize.TopResizeStrategy;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
@@ -40,12 +40,12 @@ public class BoundsImage extends RectangleImage {
         /**
          * aha
          */
-        TOP(HorizontalResize.FORBID, VerticalResize.UP),
-        TOP_LEFT(HorizontalResize.LEFT, VerticalResize.UP),
-        TOP_RIGHT(HorizontalResize.RIGHT, VerticalResize.UP),
-        BOTTOM(HorizontalResize.FORBID, VerticalResize.DOWN),
-        BOTTOM_LEFT(HorizontalResize.LEFT, VerticalResize.DOWN),
-        BOTTOM_RIGHT(HorizontalResize.RIGHT, VerticalResize.DOWN),
+        TOP(HorizontalResize.FORBID, VerticalResize.TOP),
+        TOP_LEFT(HorizontalResize.LEFT, VerticalResize.TOP),
+        TOP_RIGHT(HorizontalResize.RIGHT, VerticalResize.TOP),
+        BOTTOM(HorizontalResize.FORBID, VerticalResize.BOTTOM),
+        BOTTOM_LEFT(HorizontalResize.LEFT, VerticalResize.BOTTOM),
+        BOTTOM_RIGHT(HorizontalResize.RIGHT, VerticalResize.BOTTOM),
         LEFT(HorizontalResize.LEFT, VerticalResize.FORBID),
         RIGHT(HorizontalResize.RIGHT, VerticalResize.FORBID),
         ;
@@ -69,7 +69,7 @@ public class BoundsImage extends RectangleImage {
             /**
              * aha
              */
-            UP, DOWN, FORBID
+            TOP, BOTTOM, FORBID
         }
     }
 
@@ -132,16 +132,17 @@ public class BoundsImage extends RectangleImage {
     private void bindHandlerMouseEvent() {
         Arrays.stream(Handler.values()).forEach(handler -> {
             BoundsPoint point = handlers.get(handler);
-            if (handler.verticalResize == Handler.VerticalResize.UP) {
-                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new TopResize().handle(this));
-            } else if (handler.verticalResize == Handler.VerticalResize.DOWN) {
-                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new BottomResize().handle(this));
+            Cursor cursor = Util.getCursorSupplier(handler).get();
+            if (handler.verticalResize == Handler.VerticalResize.TOP) {
+                setHandlerMouseEvent(point, cursor, new TopResizeStrategy().handle(this));
+            } else if (handler.verticalResize == Handler.VerticalResize.BOTTOM) {
+                setHandlerMouseEvent(point, cursor, new BottomResizeStrategy().handle(this));
             }
 
             if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
-                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new LeftResize().handle(this));
+                setHandlerMouseEvent(point, cursor, new LeftResizeStrategy().handle(this));
             } else if (handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
-                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new RightResize().handle(this));
+                setHandlerMouseEvent(point, cursor, new RightResizeStrategy().handle(this));
             }
         });
     }
@@ -222,7 +223,7 @@ public class BoundsImage extends RectangleImage {
     private static class Util {
         private static Supplier<Cursor> getCursorSupplier(Handler handler) {
             return () -> {
-                if (handler.verticalResize == Handler.VerticalResize.UP) {
+                if (handler.verticalResize == Handler.VerticalResize.TOP) {
                     if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
                         return Cursor.NW_RESIZE;
                     } else if (handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
@@ -230,7 +231,7 @@ public class BoundsImage extends RectangleImage {
                     } else {
                         return Cursor.N_RESIZE;
                     }
-                } else if (handler.verticalResize == Handler.VerticalResize.DOWN) {
+                } else if (handler.verticalResize == Handler.VerticalResize.BOTTOM) {
                     if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
                         return Cursor.SW_RESIZE;
                     } else if (handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
