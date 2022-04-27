@@ -98,23 +98,19 @@ public class BoundsImage extends RectangleImage {
                         Node container = parent.getContainer();
                         double height = parent.getHeight(), offsetY = event.getY();
                         if(handler == Handler.TOP) {
+                            double y = handlers.get(Handler.BOTTOM).getCanvas().getLayoutY();
                             // direction reversed;
-                            if(container.getTranslateY() == 55.0) {
-                                double newHeight = height + offsetY;
-                                if(newHeight <= 0) {
-                                    height = Math.abs(newHeight);
-                                    container.translateYProperty().set(container.getTranslateY() + height);
+                            if(container.getTranslateY() == y) {
+                                if(offsetY < 0) {
+                                    container.translateYProperty().set(container.getTranslateY() + offsetY);
                                 }
-                                else {
-                                    height = newHeight;
-                                }
-                                System.out.println(offsetY + ", " + height);
+                                height = offsetY;
                             }
                             else {
                                 double allOffsetY = container.getTranslateY() + offsetY;
-                                if(allOffsetY >= 55.0) {
-                                    height = allOffsetY - 55.0;
-                                    container.translateYProperty().set(55.0);
+                                if(allOffsetY > y) {
+                                    height = allOffsetY - y;
+                                    container.translateYProperty().set(y);
                                 }
                                 else {
                                     height = height - offsetY;
@@ -122,10 +118,10 @@ public class BoundsImage extends RectangleImage {
                                 }
                             }
                         }
-                        else {
-                            height = height + event.getY();
-                        }
-//                        height = Math.abs(height);
+//                        else {
+//                            height = Math.abs(offsetY);
+//                        }
+                        height = Math.abs(height);
                         setHeight(height);
                         draw();
                         parent.setHeight(height);
@@ -178,7 +174,16 @@ public class BoundsImage extends RectangleImage {
         point.getCanvas().setOnMouseEntered(e -> point.getCanvas().setCursor(cursor));
         point.getCanvas().setOnMouseExited(e -> point.getCanvas().setCursor(Cursor.DEFAULT));
         point.getCanvas().setOnMousePressed(event -> hideBoundsExcept(point));
-        point.getCanvas().setOnMouseReleased(event -> showBoundsBesides(point));
+        point.getCanvas().setOnMouseReleased(event -> {
+            showBoundsBesides(point);
+            Node container = parent.getContainer();
+            parent.setX(container.getLayoutX() + container.getTranslateX());
+            parent.setY(container.getLayoutY() + container.getTranslateY());
+            container.setLayoutX(parent.getX());
+            container.setLayoutY(parent.getY());
+            container.setTranslateX(0.0);
+            container.setTranslateY(0.0);
+        });
         point.getCanvas().setOnMouseDragged(dragHandler);
     }
 
