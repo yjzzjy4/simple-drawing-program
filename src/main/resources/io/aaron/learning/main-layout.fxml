@@ -6,8 +6,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.FlowPane?>
-<?import io.aaron.learning.scene.CanvasWrapper?>
-<?import java.awt.Canvas?>
+<?import javafx.scene.layout.Pane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="root" fx:controller="io.aaron.learning.MainController">
@@ -29,7 +28,7 @@
     </right>
     <center>
         <ScrollPane fx:id="canvasScroll">
-            <CanvasWrapper fx:id="canvas" width="720" height="1024"/>
+            <Pane fx:id="canvas"/>
         </ScrollPane>
     </center>
 </BorderPane>
