@@ -38,7 +38,7 @@ public class BoundsImage extends RectangleImage {
 
     public enum Handler {
         /**
-         * aha
+         * 8 handlers;
          */
         TOP(HorizontalResize.FORBID, VerticalResize.TOP),
         TOP_LEFT(HorizontalResize.LEFT, VerticalResize.TOP),
@@ -47,8 +47,7 @@ public class BoundsImage extends RectangleImage {
         BOTTOM_LEFT(HorizontalResize.LEFT, VerticalResize.BOTTOM),
         BOTTOM_RIGHT(HorizontalResize.RIGHT, VerticalResize.BOTTOM),
         LEFT(HorizontalResize.LEFT, VerticalResize.FORBID),
-        RIGHT(HorizontalResize.RIGHT, VerticalResize.FORBID),
-        ;
+        RIGHT(HorizontalResize.RIGHT, VerticalResize.FORBID);
 
         private final HorizontalResize horizontalResize;
         private final VerticalResize verticalResize;
@@ -101,6 +100,9 @@ public class BoundsImage extends RectangleImage {
         placeHandlers();
     }
 
+    /**
+     * place all handlers in the container;
+     */
     private void placeHandlers() {
         bindHandlerPosition(Handler.TOP, parent.getWidth() / 2, 0.0);
         bindHandlerPosition(Handler.TOP_RIGHT, parent.getWidth(), 0.0);
@@ -124,6 +126,8 @@ public class BoundsImage extends RectangleImage {
         Canvas canvas = point.getCanvas();
         canvas.layoutXProperty().set(offsetX - POINT_RADIUS);
         canvas.layoutYProperty().set(offsetY - POINT_RADIUS);
+        canvas.translateXProperty().set(0.0);
+        canvas.translateYProperty().set(0.0);
     }
 
     /**
@@ -134,15 +138,15 @@ public class BoundsImage extends RectangleImage {
             BoundsPoint point = handlers.get(handler);
             Cursor cursor = Util.getCursorSupplier(handler).get();
             if (handler.verticalResize == Handler.VerticalResize.TOP) {
-                setHandlerMouseEvent(point, cursor, new TopResizeStrategy().handle(this));
+                setHandlerMouseEvent(point, cursor, new TopResizeStrategy().handle(point, this));
             } else if (handler.verticalResize == Handler.VerticalResize.BOTTOM) {
-                setHandlerMouseEvent(point, cursor, new BottomResizeStrategy().handle(this));
+                setHandlerMouseEvent(point, cursor, new BottomResizeStrategy().handle(point, this));
             }
 
             if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
-                setHandlerMouseEvent(point, cursor, new LeftResizeStrategy().handle(this));
+                setHandlerMouseEvent(point, cursor, new LeftResizeStrategy().handle(point, this));
             } else if (handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
-                setHandlerMouseEvent(point, cursor, new RightResizeStrategy().handle(this));
+                setHandlerMouseEvent(point, cursor, new RightResizeStrategy().handle(point, this));
             }
         });
     }
@@ -211,6 +215,7 @@ public class BoundsImage extends RectangleImage {
                 .y(shape.getY())
                 .width(shape.getWidth())
                 .height(shape.getHeight())
+                .strokeWidth(1.0)
                 .square(false)
                 .filled(false)
                 .stroke(Color.web("#00b8f0"))

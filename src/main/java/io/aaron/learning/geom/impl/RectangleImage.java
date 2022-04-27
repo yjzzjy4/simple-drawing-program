@@ -48,21 +48,21 @@ public class RectangleImage extends AbstractShape {
     public Node draw() {
         Canvas canvas = getCanvas();
         if(canvas == null) {
-            setCanvas(new Canvas(getWidth() + 2, getHeight() + 2));
+            setCanvas(new Canvas(getWidth() + 2 * getStrokeWidth(), getHeight() + 2 * getStrokeWidth()));
             canvas = getCanvas();
         }
         else {
-            canvas.setHeight(getHeight() + 2);
-            canvas.setWidth(getWidth() + 2);
+            canvas.setHeight(getHeight() + 2 * getStrokeWidth());
+            canvas.setWidth(getWidth() + 2 * getStrokeWidth());
         }
         GraphicsContext context = canvas.getGraphicsContext2D();
-        context.clearRect(0, 0, getWidth() + 2, getHeight() + 2);
+        context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         context.setFill(getFill());
         context.setStroke(getStroke());
         if(getFilled()) {
-            context.fillRect(0, 0, getWidth(), getHeight());
+            context.fillRect(getStrokeWidth(), getStrokeWidth(), getWidth(), getHeight());
         }
-        context.strokeRect(0, 0, getWidth(), getHeight());
+        context.strokeRect(getStrokeWidth(), getStrokeWidth(), getWidth(), getHeight());
         return canvas;
     }
 

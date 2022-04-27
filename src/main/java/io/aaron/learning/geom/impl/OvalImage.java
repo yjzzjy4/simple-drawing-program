@@ -51,21 +51,21 @@ public class OvalImage extends AbstractShape {
     public Node draw() {
         Canvas canvas = getCanvas();
         if(canvas == null) {
-            setCanvas(new Canvas(getWidth() + 2, getHeight() + 2));
+            setCanvas(new Canvas(getWidth() + getStrokeWidth() * 2, getHeight() + getStrokeWidth() * 2));
             canvas = getCanvas();
         }
         else {
-            canvas.setHeight(getHeight() + 2);
-            canvas.setWidth(getWidth() + 2);
+            canvas.setHeight(getHeight() + getStrokeWidth() * 2);
+            canvas.setWidth(getWidth() + getStrokeWidth() * 2);
         }
         GraphicsContext context = canvas.getGraphicsContext2D();
-        context.clearRect(0, 0, getWidth() + 2, getHeight() + 2);
+        context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         context.setFill(getFill());
         context.setStroke(getStroke());
         if(getFilled()) {
-            context.fillOval(0, 0, getWidth(), getHeight());
+            context.fillOval(getStrokeWidth(), getStrokeWidth(), getWidth(), getHeight());
         }
-        context.strokeOval(0, 0, getWidth(), getHeight());
+        context.strokeOval(getStrokeWidth(), getStrokeWidth(), getWidth(), getHeight());
         return canvas;
     }
 }

@@ -1,18 +1,19 @@
 package io.aaron.learning.geom.strategy.resize;
 
 import io.aaron.learning.geom.BoundsImage;
+import io.aaron.learning.geom.impl.BoundsPoint;
 import io.aaron.learning.geom.strategy.resize.base.VerticalResizeStrategy;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * @author lishuang
+ * @author Aaron
  * @since 2022/04/27 11:29:45
  */
 public class TopResizeStrategy implements VerticalResizeStrategy {
     @Override
-    public EventHandler<? super MouseEvent> handle(BoundsImage bounds) {
+    public EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds) {
         return event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
                 Node container = bounds.getParent().getContainer();
@@ -21,8 +22,9 @@ public class TopResizeStrategy implements VerticalResizeStrategy {
                 double baseY = (bounds.getHandlers().get(BoundsImage.Handler.BOTTOM).getCanvas().getHeight() +
                         bounds.getHandlers().get(BoundsImage.Handler.BOTTOM).getCanvas().getLayoutY() * 2) / 2;
 
-                // direction reversed;
+                // mirror flip;
                 if (container.getTranslateY() == baseY) {
+                    // flip back;
                     if (offsetY < 0) {
                         container.translateYProperty().set(container.getTranslateY() + offsetY);
                     }
@@ -39,6 +41,7 @@ public class TopResizeStrategy implements VerticalResizeStrategy {
                 }
                 resize(bounds, height);
             }
+            event.consume();
         };
     }
 }

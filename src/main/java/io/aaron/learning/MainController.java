@@ -1,19 +1,26 @@
 package io.aaron.learning;
 
+import io.aaron.learning.geom.AbstractShape;
 import io.aaron.learning.geom.impl.OvalImage;
 import io.aaron.learning.geom.impl.RectangleImage;
-import io.aaron.learning.scene.ShapeHolder;
+import io.aaron.learning.manage.ShapeHolder;
+import io.aaron.learning.manage.ShapePrototypeHolder;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainController {
     @FXML
@@ -44,7 +51,7 @@ public class MainController {
     private Pane canvas;
 
     //    @FXML
-//    public ShapeHolder canvas;
+    //    public ShapeHolder canvas;
 
     public void initialize() {
         menubar.getMenus().addAll(new Menu("File"), new Menu("Edit"), new Menu("View"), new Menu("Arrange"));
@@ -85,9 +92,20 @@ public class MainController {
             canvas.getChildren().add(node);
         });
         shapePicker.getChildren().addAll(drawRect, drawCircle);
+        ShapePrototypeHolder.PROTOTYPES.values().forEach(o -> {
+            Canvas canvas = o.getCanvas();
+            double scaleFactor = canvas.getWidth() > canvas.getHeight() ? 40.0 / canvas.getWidth() :
+                    40.0 / canvas.getHeight();
+            canvas.scaleXProperty().set(scaleFactor);
+            canvas.scaleYProperty().set(scaleFactor);
+        });
+        shapePicker.getChildren()
+                   .addAll(ShapePrototypeHolder.PROTOTYPES.values()
+                                                          .stream()
+                                                          .map(AbstractShape::getContainer)
+                                                          .collect(Collectors.toList()));
 
         // 画板区域;
-//        canvas.setStyle("-fx-background-color: #000");
         canvas.prefWidthProperty().bind(canvasScroll.widthProperty());
         canvas.prefHeightProperty().bind(canvasScroll.heightProperty());
         canvasScroll.setMinViewportWidth(600);
@@ -96,5 +114,17 @@ public class MainController {
         propEditorScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.15));
         propEditorScroll.setMinViewportWidth(100);
         propEditor.prefWidthProperty().bind(propEditorScroll.prefViewportWidthProperty());
+
+        // 删除图形;
+        root.setOnKeyPressed(event -> {
+            if(event.getCode().equals(KeyCode.DELETE)) {
+                List<AbstractShape> selected = ShapeHolder.getAllShapes()
+                                                          .stream()
+                                                          .filter(AbstractShape::getSelected)
+                                                          .collect(Collectors.toList());
+                canvas.getChildren().removeAll(selected.stream().map(AbstractShape::getContainer).collect(Collectors.toList()));
+                ShapeHolder.getAllShapes().removeAll(selected);
+            }
+        });
     }
 }

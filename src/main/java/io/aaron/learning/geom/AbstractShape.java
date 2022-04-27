@@ -1,7 +1,7 @@
 package io.aaron.learning.geom;
 
 import io.aaron.learning.geom.impl.BoundsPoint;
-import io.aaron.learning.scene.ShapeHolder;
+import io.aaron.learning.manage.ShapeHolder;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @EqualsAndHashCode
-public abstract class AbstractShape {
+public abstract class AbstractShape implements Cloneable {
     private Double x;
     private Double y;
     private Double width;
@@ -41,6 +41,7 @@ public abstract class AbstractShape {
         selected = false;
         stroke = Color.web("#000");
         fill = Color.web("#fff");
+        strokeWidth = 1.0;
         container = new Group();
     }
 
@@ -70,7 +71,7 @@ public abstract class AbstractShape {
 
         // drag;
         container.setOnMouseDragged(event -> {
-            if (event.getTarget() == container && event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
                 container.translateXProperty().set(container.getTranslateX() + event.getX() - getWidth() / 2);
                 container.translateYProperty().set(container.getTranslateY() + event.getY() - getHeight() / 2);
             }
@@ -112,5 +113,10 @@ public abstract class AbstractShape {
 
     public boolean contains(double x, double y) {
         return false;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

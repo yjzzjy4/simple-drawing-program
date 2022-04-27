@@ -1,4 +1,4 @@
-package io.aaron.learning.scene;
+package io.aaron.learning.manage;
 
 import io.aaron.learning.geom.AbstractShape;
 import javafx.scene.canvas.Canvas;
