@@ -2,6 +2,10 @@ package io.aaron.learning.geom;
 
 import io.aaron.learning.geom.impl.BoundsPoint;
 import io.aaron.learning.geom.impl.RectangleImage;
+import io.aaron.learning.geom.strategy.resize.BottomResize;
+import io.aaron.learning.geom.strategy.resize.LeftResize;
+import io.aaron.learning.geom.strategy.resize.RightResize;
+import io.aaron.learning.geom.strategy.resize.TopResize;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
@@ -10,15 +14,21 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @SuperBuilder
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class BoundsImage extends RectangleImage {
     private AbstractShape parent;
     private final Map<Handler, BoundsPoint> handlers = new HashMap<>();
@@ -27,7 +37,40 @@ public class BoundsImage extends RectangleImage {
     public final DoubleProperty heightProperty = new SimpleDoubleProperty();
 
     public enum Handler {
-        TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, TOP_LEFT
+        /**
+         * aha
+         */
+        TOP(HorizontalResize.FORBID, VerticalResize.UP),
+        TOP_LEFT(HorizontalResize.LEFT, VerticalResize.UP),
+        TOP_RIGHT(HorizontalResize.RIGHT, VerticalResize.UP),
+        BOTTOM(HorizontalResize.FORBID, VerticalResize.DOWN),
+        BOTTOM_LEFT(HorizontalResize.LEFT, VerticalResize.DOWN),
+        BOTTOM_RIGHT(HorizontalResize.RIGHT, VerticalResize.DOWN),
+        LEFT(HorizontalResize.LEFT, VerticalResize.FORBID),
+        RIGHT(HorizontalResize.RIGHT, VerticalResize.FORBID),
+        ;
+
+        private final HorizontalResize horizontalResize;
+        private final VerticalResize verticalResize;
+
+        Handler(HorizontalResize horizontalResize, VerticalResize verticalResize) {
+            this.horizontalResize = horizontalResize;
+            this.verticalResize = verticalResize;
+        }
+
+        public enum HorizontalResize {
+            /**
+             * aha
+             */
+            LEFT, RIGHT, FORBID
+        }
+
+        public enum VerticalResize {
+            /**
+             * aha
+             */
+            UP, DOWN, FORBID
+        }
     }
 
     private BoundsImage() {
@@ -38,23 +81,23 @@ public class BoundsImage extends RectangleImage {
     private void hideBoundsExcept(@NonNull BoundsPoint point) {
         parent.getContainer().getChildren().remove(getCanvas());
         parent.getContainer()
-              .getChildren()
-              .removeAll(handlers.values()
-                                 .stream()
-                                 .filter(p -> !p.equals(point))
-                                 .map(AbstractShape::getCanvas)
-                                 .collect(Collectors.toList()));
+                .getChildren()
+                .removeAll(handlers.values()
+                        .stream()
+                        .filter(p -> !p.equals(point))
+                        .map(AbstractShape::getCanvas)
+                        .collect(Collectors.toList()));
     }
 
     private void showBoundsBesides(@NonNull BoundsPoint point) {
         parent.getContainer().getChildren().add(draw());
         parent.getContainer()
-              .getChildren()
-              .addAll(handlers.values()
-                                 .stream()
-                                 .filter(p -> !p.equals(point))
-                                 .map(AbstractShape::getCanvas)
-                                 .collect(Collectors.toList()));
+                .getChildren()
+                .addAll(handlers.values()
+                        .stream()
+                        .filter(p -> !p.equals(point))
+                        .map(AbstractShape::getCanvas)
+                        .collect(Collectors.toList()));
         placeHandlers();
     }
 
@@ -85,81 +128,22 @@ public class BoundsImage extends RectangleImage {
 
     /**
      * (logically) bind handler point event;
-     *
-     * @param handler handler point;
      */
-    private void bindHandlerMouseEvent(Handler handler) {
-        BoundsPoint point = handlers.get(handler);
-        switch(handler) {
-            case TOP:
-            case BOTTOM: {
-                setHandlerMouseEvent(point, Cursor.V_RESIZE, event -> {
-                    if(event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                        Node container = parent.getContainer();
-                        double height = parent.getHeight(), offsetY = event.getY();
-                        if(handler == Handler.TOP) {
-                            double y = handlers.get(Handler.BOTTOM).getCanvas().getLayoutY();
-                            // direction reversed;
-                            if(container.getTranslateY() == y) {
-                                if(offsetY < 0) {
-                                    container.translateYProperty().set(container.getTranslateY() + offsetY);
-                                }
-                                height = offsetY;
-                            }
-                            else {
-                                double allOffsetY = container.getTranslateY() + offsetY;
-                                if(allOffsetY > y) {
-                                    height = allOffsetY - y;
-                                    container.translateYProperty().set(y);
-                                }
-                                else {
-                                    height = height - offsetY;
-                                    container.translateYProperty().set(allOffsetY);
-                                }
-                            }
-                        }
-//                        else {
-//                            height = Math.abs(offsetY);
-//                        }
-                        height = Math.abs(height);
-                        setHeight(height);
-                        draw();
-                        parent.setHeight(height);
-                        parent.draw();
-//                        placeHandlers();
-                    }
-                });
-                break;
+    private void bindHandlerMouseEvent() {
+        Arrays.stream(Handler.values()).forEach(handler -> {
+            BoundsPoint point = handlers.get(handler);
+            if (handler.verticalResize == Handler.VerticalResize.UP) {
+                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new TopResize().handle(this));
+            } else if (handler.verticalResize == Handler.VerticalResize.DOWN) {
+                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new BottomResize().handle(this));
             }
-            case LEFT:
-            case RIGHT: {
-                setHandlerMouseEvent(point, Cursor.H_RESIZE, event -> {
-                    if(event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
 
-                    }
-                });
-                break;
+            if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
+                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new LeftResize().handle(this));
+            } else if (handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
+                setHandlerMouseEvent(point, Util.getCursorSupplier(handler).get(), new RightResize().handle(this));
             }
-            case TOP_LEFT:
-            case BOTTOM_RIGHT: {
-                setHandlerMouseEvent(point, Cursor.NW_RESIZE, event -> {
-                    if(event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-
-                    }
-                });
-                break;
-            }
-            case TOP_RIGHT:
-            case BOTTOM_LEFT: {
-                setHandlerMouseEvent(point, Cursor.NE_RESIZE, event -> {
-                    if(event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-
-                    }
-                });
-                break;
-            }
-        }
-
+        });
     }
 
     /**
@@ -171,8 +155,8 @@ public class BoundsImage extends RectangleImage {
      */
     private void setHandlerMouseEvent(@NonNull BoundsPoint point, Cursor cursor,
                                       EventHandler<? super MouseEvent> dragHandler) {
-        point.getCanvas().setOnMouseEntered(e -> point.getCanvas().setCursor(cursor));
-        point.getCanvas().setOnMouseExited(e -> point.getCanvas().setCursor(Cursor.DEFAULT));
+        point.getCanvas().setOnMouseEntered(event -> point.getCanvas().setCursor(cursor));
+        point.getCanvas().setOnMouseExited(event -> point.getCanvas().setCursor(Cursor.DEFAULT));
         point.getCanvas().setOnMousePressed(event -> hideBoundsExcept(point));
         point.getCanvas().setOnMouseReleased(event -> {
             showBoundsBesides(point);
@@ -184,27 +168,20 @@ public class BoundsImage extends RectangleImage {
             container.setTranslateX(0.0);
             container.setTranslateY(0.0);
         });
-        point.getCanvas().setOnMouseDragged(dragHandler);
+        point.getCanvas().addEventHandler(MouseEvent.MOUSE_DRAGGED, dragHandler);
     }
 
     private void init() {
         // 8 handlers;
         handlers.put(Handler.TOP, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.TOP);
         handlers.put(Handler.TOP_RIGHT, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.TOP_RIGHT);
         handlers.put(Handler.RIGHT, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.RIGHT);
         handlers.put(Handler.BOTTOM_RIGHT, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.BOTTOM_RIGHT);
         handlers.put(Handler.BOTTOM, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.BOTTOM);
         handlers.put(Handler.BOTTOM_LEFT, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.BOTTOM_LEFT);
         handlers.put(Handler.LEFT, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.LEFT);
         handlers.put(Handler.TOP_LEFT, new BoundsPoint(10.0));
-        bindHandlerMouseEvent(Handler.TOP_LEFT);
+        bindHandlerMouseEvent();
         placeHandlers();
     }
 
@@ -228,17 +205,47 @@ public class BoundsImage extends RectangleImage {
 
     public static BoundsImage fromShape(@NonNull AbstractShape shape) {
         BoundsImage bounds = BoundsImage.builder()
-                                        .parent(shape)
-                                        .x(shape.getX())
-                                        .y(shape.getY())
-                                        .width(shape.getWidth())
-                                        .height(shape.getHeight())
-                                        .square(false)
-                                        .filled(false)
-                                        .stroke(Color.web("#00b8f0"))
-                                        .fill(Color.web("#00b8f0"))
-                                        .build();
+                .parent(shape)
+                .x(shape.getX())
+                .y(shape.getY())
+                .width(shape.getWidth())
+                .height(shape.getHeight())
+                .square(false)
+                .filled(false)
+                .stroke(Color.web("#00b8f0"))
+                .fill(Color.web("#00b8f0"))
+                .build();
         bounds.init();
         return bounds;
+    }
+
+    private static class Util {
+        private static Supplier<Cursor> getCursorSupplier(Handler handler) {
+            return () -> {
+                if (handler.verticalResize == Handler.VerticalResize.UP) {
+                    if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
+                        return Cursor.NW_RESIZE;
+                    } else if (handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
+                        return Cursor.NE_RESIZE;
+                    } else {
+                        return Cursor.N_RESIZE;
+                    }
+                } else if (handler.verticalResize == Handler.VerticalResize.DOWN) {
+                    if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
+                        return Cursor.SW_RESIZE;
+                    } else if (handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
+                        return Cursor.SE_RESIZE;
+                    } else {
+                        return Cursor.S_RESIZE;
+                    }
+                } else {
+                    if (handler.horizontalResize == Handler.HorizontalResize.LEFT) {
+                        return Cursor.W_RESIZE;
+                    } else {
+                        return Cursor.E_RESIZE;
+                    }
+                }
+            };
+        }
     }
 }
