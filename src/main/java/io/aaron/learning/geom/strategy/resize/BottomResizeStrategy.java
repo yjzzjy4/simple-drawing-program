@@ -16,35 +16,38 @@ public class BottomResizeStrategy implements VerticalResizeStrategy {
     public EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds) {
         return event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+                System.out.println("BOTTOM");
                 Node container = bounds.getParent().getContainer();
                 double height = bounds.getParent().getHeight();
                 double offsetY = event.getY();
-                double baseY = (bounds.getHandlers().get(BoundsImage.Handler.TOP).getCanvas().getHeight() +
-                        bounds.getHandlers().get(BoundsImage.Handler.TOP).getCanvas().getLayoutY() * 2) / 2;
+                double absLayoutY = Math.abs(point.getCanvas().getLayoutY());
+                double offsetRadius = point.getHeight() / 2;
 
                 // mirror flip;
-                if (point.getCanvas().getTranslateY() + point.getCanvas().getLayoutY() == 0.0) {
-                    System.out.println("offsetY: " + offsetY);
+                if (container.getTranslateY() < 0.0) {
                     // flip back;
                     if (offsetY > 0) {
                         container.translateYProperty().set(0.0);
-                        point.getCanvas().translateYProperty().set(point.getCanvas().getTranslateY() + offsetY);
+                        height = offsetY;
+                        point.getCanvas().translateYProperty().set(height - absLayoutY - offsetRadius);
                     } else {
                         container.translateYProperty().set(offsetY);
+                        height = Math.abs(container.getTranslateY());
+                        point.getCanvas().translateYProperty().set(height - absLayoutY - offsetRadius);
                     }
-                    height = offsetY;
                 } else {
                     double allOffsetY = height + offsetY;
+                    // mirror flip;
                     if(allOffsetY < 0) {
-                        height = allOffsetY;
-                        container.translateYProperty().set(height);
-                        point.getCanvas().translateYProperty().set(0.0 - point.getCanvas().getLayoutY());
+                        container.translateYProperty().set(allOffsetY);
+                        height = Math.abs(allOffsetY);
+                        point.getCanvas().translateYProperty().set(height - absLayoutY - offsetRadius);
                     } else {
                         point.getCanvas().translateYProperty().set(point.getCanvas().getTranslateY() + offsetY);
-                        height = point.getCanvas().getTranslateY() + Math.abs(point.getCanvas().getLayoutY() + point.getHeight() / 2);
+                        height = point.getCanvas().getTranslateY() + Math.abs(point.getCanvas().getLayoutY() + offsetRadius);
                     }
                 }
-                resize(bounds, height);
+                resizeHeight(bounds, height);
             }
             event.consume();
         };

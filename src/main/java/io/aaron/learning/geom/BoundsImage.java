@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 public class BoundsImage extends RectangleImage {
     private AbstractShape parent;
     private final Map<Handler, BoundsPoint> handlers = new HashMap<>();
-    private final Double POINT_RADIUS = 5.0;
     public final DoubleProperty widthProperty = new SimpleDoubleProperty();
     public final DoubleProperty heightProperty = new SimpleDoubleProperty();
 
@@ -124,10 +123,12 @@ public class BoundsImage extends RectangleImage {
     private void bindHandlerPosition(Handler handler, double offsetX, double offsetY) {
         BoundsPoint point = handlers.get(handler);
         Canvas canvas = point.getCanvas();
-        canvas.layoutXProperty().set(offsetX - POINT_RADIUS);
-        canvas.layoutYProperty().set(offsetY - POINT_RADIUS);
+        canvas.layoutXProperty().set(offsetX - point.getHeight() / 2);
+        canvas.layoutYProperty().set(offsetY - point.getHeight() / 2);
         canvas.translateXProperty().set(0.0);
         canvas.translateYProperty().set(0.0);
+        point.getCanvas().translateXProperty().set(0.0);
+        point.getCanvas().translateYProperty().set(0.0);
     }
 
     /**

@@ -13,6 +13,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -126,5 +127,17 @@ public class MainController {
                 ShapeHolder.getAllShapes().removeAll(selected);
             }
         });
+
+        // 取消所有选中;
+//        canvasScroll.setOnMouseClicked(event -> {
+//            if(event.getButton() == MouseButton.PRIMARY) {
+//                ShapeHolder.getAllShapes().forEach(o -> {
+//                    o.setSelected(false);
+//                    o.getBounds().hide();
+//                });
+//            }
+//            event.consume();
+//        });
+
     }
 }

@@ -12,11 +12,22 @@ import javafx.scene.input.MouseEvent;
 public interface ResizeStrategy {
     EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds);
 
-    default void resize(BoundsImage bounds, Double height) {
+    default void resizeWidth(BoundsImage bounds, Double width) {
+        resize(bounds, width, bounds.getParent().getHeight());
+    }
+
+    default void resizeHeight(BoundsImage bounds, Double height) {
+        resize(bounds, bounds.getParent().getWidth(), height);
+    }
+
+    default void resize(BoundsImage bounds, Double width, Double height) {
+        width = Math.abs(width);
         height = Math.abs(height);
+        bounds.setWidth(width);
         bounds.setHeight(height);
-        bounds.draw();
+        bounds.getParent().setWidth(width);
         bounds.getParent().setHeight(height);
         bounds.getParent().draw();
+        bounds.draw();
     }
 }

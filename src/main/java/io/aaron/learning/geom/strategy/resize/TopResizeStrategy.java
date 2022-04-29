@@ -16,6 +16,7 @@ public class TopResizeStrategy implements VerticalResizeStrategy {
     public EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds) {
         return event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+                System.out.println("TOP");
                 Node container = bounds.getParent().getContainer();
                 double height = bounds.getParent().getHeight();
                 double offsetY = event.getY();
@@ -31,6 +32,7 @@ public class TopResizeStrategy implements VerticalResizeStrategy {
                     height = offsetY;
                 } else {
                     double allOffsetY = container.getTranslateY() + offsetY;
+                    // mirror flip;
                     if (allOffsetY > baseY) {
                         height = allOffsetY - baseY;
                         container.translateYProperty().set(baseY);
@@ -39,7 +41,7 @@ public class TopResizeStrategy implements VerticalResizeStrategy {
                         container.translateYProperty().set(allOffsetY);
                     }
                 }
-                resize(bounds, height);
+                resizeHeight(bounds, height);
             }
             event.consume();
         };

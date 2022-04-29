@@ -72,8 +72,8 @@ public abstract class AbstractShape implements Cloneable {
         // drag;
         container.setOnMouseDragged(event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                container.translateXProperty().set(container.getTranslateX() + event.getX() - getWidth() / 2);
-                container.translateYProperty().set(container.getTranslateY() + event.getY() - getHeight() / 2);
+                container.layoutXProperty().set(container.getLayoutX() + event.getX() - getWidth() / 2);
+                container.layoutYProperty().set(container.getLayoutY() + event.getY() - getHeight() / 2);
             }
         });
 
@@ -89,6 +89,7 @@ public abstract class AbstractShape implements Cloneable {
                     else {
                         bounds.hide();
                     }
+                    event.consume();
                     return;
                 }
                 ShapeHolder.getAllShapes().forEach(shapeWithin -> {
@@ -102,6 +103,7 @@ public abstract class AbstractShape implements Cloneable {
                 }
                 selected = true;
             }
+            event.consume();
         });
     }
 
