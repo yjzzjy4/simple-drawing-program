@@ -1,7 +1,7 @@
 package io.aaron.learning.geom.strategy.resize;
 
-import io.aaron.learning.geom.BoundsImage;
-import io.aaron.learning.geom.impl.BoundsPoint;
+import io.aaron.learning.geom.decorator.ShapeImageBoundsDecorator;
+import io.aaron.learning.geom.shape.BoundsPoint;
 import io.aaron.learning.geom.strategy.resize.base.VerticalResizeStrategy;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -13,15 +13,13 @@ import javafx.scene.input.MouseEvent;
  */
 public class BottomResizeStrategy implements VerticalResizeStrategy {
     @Override
-    public EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds) {
+    public EventHandler<? super MouseEvent> handle(BoundsPoint point, ShapeImageBoundsDecorator bounds) {
         return event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                System.out.println("BOTTOM");
-                Node container = bounds.getParent().getContainer();
-                double height = bounds.getParent().getHeight();
+                Node container = bounds.getContainer();
+                double height = bounds.getHeight();
                 double offsetY = event.getY();
-                double absLayoutY = Math.abs(point.getCanvas().getLayoutY());
-                double offsetRadius = point.getHeight() / 2;
+                double originHeight = Math.abs(point.getCanvas().getLayoutY() + point.getHeight() / 2);
 
                 // mirror flip;
                 if (container.getTranslateY() < 0.0) {
@@ -29,11 +27,11 @@ public class BottomResizeStrategy implements VerticalResizeStrategy {
                     if (offsetY > 0) {
                         container.translateYProperty().set(0.0);
                         height = offsetY;
-                        point.getCanvas().translateYProperty().set(height - absLayoutY - offsetRadius);
+                        point.getCanvas().translateYProperty().set(height - originHeight);
                     } else {
                         container.translateYProperty().set(offsetY);
                         height = Math.abs(container.getTranslateY());
-                        point.getCanvas().translateYProperty().set(height - absLayoutY - offsetRadius);
+                        point.getCanvas().translateYProperty().set(height - originHeight);
                     }
                 } else {
                     double allOffsetY = height + offsetY;
@@ -41,10 +39,10 @@ public class BottomResizeStrategy implements VerticalResizeStrategy {
                     if(allOffsetY < 0) {
                         container.translateYProperty().set(allOffsetY);
                         height = Math.abs(allOffsetY);
-                        point.getCanvas().translateYProperty().set(height - absLayoutY - offsetRadius);
+                        point.getCanvas().translateYProperty().set(height - originHeight);
                     } else {
                         point.getCanvas().translateYProperty().set(point.getCanvas().getTranslateY() + offsetY);
-                        height = point.getCanvas().getTranslateY() + Math.abs(point.getCanvas().getLayoutY() + offsetRadius);
+                        height = point.getCanvas().getTranslateY() + originHeight;
                     }
                 }
                 resizeHeight(bounds, height);

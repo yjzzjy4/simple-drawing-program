@@ -1,6 +1,6 @@
 package io.aaron.learning.manage;
 
-import io.aaron.learning.geom.AbstractShape;
+import io.aaron.learning.geom.base.AbstractShape;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

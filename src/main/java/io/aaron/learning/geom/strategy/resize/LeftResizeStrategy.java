@@ -1,7 +1,7 @@
 package io.aaron.learning.geom.strategy.resize;
 
-import io.aaron.learning.geom.BoundsImage;
-import io.aaron.learning.geom.impl.BoundsPoint;
+import io.aaron.learning.geom.decorator.ShapeImageBoundsDecorator;
+import io.aaron.learning.geom.shape.BoundsPoint;
 import io.aaron.learning.geom.strategy.resize.base.HorizontalResizeStrategy;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -13,18 +13,17 @@ import javafx.scene.input.MouseEvent;
  */
 public class LeftResizeStrategy implements HorizontalResizeStrategy {
     @Override
-    public EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds) {
+    public EventHandler<? super MouseEvent> handle(BoundsPoint point, ShapeImageBoundsDecorator bounds) {
         return event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                System.out.println("LEFT");
-                Node container = bounds.getParent().getContainer();
-                double width = bounds.getParent().getWidth();
+                Node container = bounds.getContainer();
+                double width = bounds.getWidth();
                 double offsetX = event.getX();
-                double baseX = (bounds.getHandlers().get(BoundsImage.Handler.RIGHT).getCanvas().getWidth() +
-                        bounds.getHandlers().get(BoundsImage.Handler.RIGHT).getCanvas().getLayoutX() * 2) / 2;
+                double originWidth = (bounds.getHandlers().get(ShapeImageBoundsDecorator.Handler.RIGHT).getCanvas().getWidth() +
+                        bounds.getHandlers().get(ShapeImageBoundsDecorator.Handler.RIGHT).getCanvas().getLayoutX() * 2) / 2;
 
                 // mirror flip;
-                if (container.getTranslateX() == baseX) {
+                if (container.getTranslateX() == originWidth) {
                     // flip back;
                     if (offsetX < 0) {
                         container.translateXProperty().set(container.getTranslateX() + offsetX);
@@ -33,9 +32,9 @@ public class LeftResizeStrategy implements HorizontalResizeStrategy {
                 } else {
                     double allOffsetX = container.getTranslateX() + offsetX;
                     // mirror flip;
-                    if (allOffsetX > baseX) {
-                        width = allOffsetX - baseX;
-                        container.translateXProperty().set(baseX);
+                    if (allOffsetX > originWidth) {
+                        width = allOffsetX - originWidth;
+                        container.translateXProperty().set(originWidth);
                     } else {
                         width = width - offsetX;
                         container.translateXProperty().set(allOffsetX);

@@ -1,7 +1,7 @@
 package io.aaron.learning.geom.strategy.resize;
 
-import io.aaron.learning.geom.BoundsImage;
-import io.aaron.learning.geom.impl.BoundsPoint;
+import io.aaron.learning.geom.decorator.ShapeImageBoundsDecorator;
+import io.aaron.learning.geom.shape.BoundsPoint;
 import io.aaron.learning.geom.strategy.resize.base.HorizontalResizeStrategy;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -13,15 +13,13 @@ import javafx.scene.input.MouseEvent;
  */
 public class RightResizeStrategy implements HorizontalResizeStrategy {
     @Override
-    public EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds) {
+    public EventHandler<? super MouseEvent> handle(BoundsPoint point, ShapeImageBoundsDecorator bounds) {
         return event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                System.out.println("RIGHT");
-                Node container = bounds.getParent().getContainer();
-                double width = bounds.getParent().getWidth();
+                Node container = bounds.getContainer();
+                double width = bounds.getWidth();
                 double offsetX = event.getX();
-                double absLayoutX = Math.abs(point.getCanvas().getLayoutX());
-                double offsetRadius = point.getWidth() / 2;
+                double originWidth = Math.abs(point.getCanvas().getLayoutX() + point.getWidth() / 2);
 
                 // mirror flip;
                 if(container.getTranslateX() < 0.0) {
@@ -29,12 +27,12 @@ public class RightResizeStrategy implements HorizontalResizeStrategy {
                     if(offsetX > 0) {
                         container.translateXProperty().set(0.0);
                         width = offsetX;
-                        point.getCanvas().translateXProperty().set(width - absLayoutX - offsetRadius);
+                        point.getCanvas().translateXProperty().set(width - originWidth);
                     }
                     else {
                         container.translateXProperty().set(offsetX);
                         width = Math.abs(container.getTranslateX());
-                        point.getCanvas().translateXProperty().set(width - absLayoutX - offsetRadius);
+                        point.getCanvas().translateXProperty().set(width - originWidth);
                     }
                 }
                 else {
@@ -43,11 +41,11 @@ public class RightResizeStrategy implements HorizontalResizeStrategy {
                     if(allOffsetX < 0) {
                         container.translateXProperty().set(allOffsetX);
                         width = Math.abs(allOffsetX);
-                        point.getCanvas().translateXProperty().set(width - absLayoutX - offsetRadius);
+                        point.getCanvas().translateXProperty().set(width - originWidth);
                     }
                     else {
                         point.getCanvas().translateXProperty().set(point.getCanvas().getTranslateX() + offsetX);
-                        width = point.getCanvas().getTranslateX() + Math.abs(point.getCanvas().getLayoutX() + offsetRadius);
+                        width = point.getCanvas().getTranslateX() + originWidth;
                     }
                 }
                 resizeWidth(bounds, width);

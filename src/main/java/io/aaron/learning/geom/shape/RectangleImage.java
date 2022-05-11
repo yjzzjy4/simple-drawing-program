@@ -1,6 +1,6 @@
-package io.aaron.learning.geom.impl;
+package io.aaron.learning.geom.shape;
 
-import io.aaron.learning.geom.AbstractShape;
+import io.aaron.learning.geom.base.AbstractShape;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,53 +17,49 @@ public class RectangleImage extends AbstractShape {
     private Boolean square;
 
     public RectangleImage() {
-        this(false);
+        super(120.0, 60.0);
+        this.square = false;
     }
 
-    public RectangleImage(Boolean square) {
-        super();
-        this.square = square;
-        init(square);
+    public RectangleImage(Double length) {
+        super(length, length);
+        this.square = true;
     }
 
     public RectangleImage(Double x, Double y, Double width, Double height) {
         super(x, y, width, height);
         this.square = false;
-        super.encapsulateShape();
-    }
-
-    private void init(Boolean square) {
-        if(square) {
-            setWidth(80.0);
-            setHeight(80.0);
-        }
-        else {
-            setWidth(120.0);
-            setHeight(60.0);
-        }
-        super.encapsulateShape();
     }
 
     @Override
     public Node draw() {
         Canvas canvas = getCanvas();
         if(canvas == null) {
-            setCanvas(new Canvas(getWidth() + 2 * getStrokeWidth(), getHeight() + 2 * getStrokeWidth()));
+            setCanvas(new Canvas(getWidth() + 2 * getLineWidth(), getHeight() + 2 * getLineWidth()));
             canvas = getCanvas();
         }
         else {
-            canvas.setHeight(getHeight() + 2 * getStrokeWidth());
-            canvas.setWidth(getWidth() + 2 * getStrokeWidth());
+            canvas.setHeight(getHeight() + 2 * getLineWidth());
+            canvas.setWidth(getWidth() + 2 * getLineWidth());
         }
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        context.setFill(getFill());
-        context.setStroke(getStroke());
+        context.setFill(getFillPaint());
+        context.setStroke(getStrokePaint());
         if(getFilled()) {
-            context.fillRect(getStrokeWidth(), getStrokeWidth(), getWidth(), getHeight());
+            context.fillRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
         }
-        context.strokeRect(getStrokeWidth(), getStrokeWidth(), getWidth(), getHeight());
+        context.strokeRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
         return canvas;
+    }
+
+    @Override
+    public AbstractShape getDefault() {
+        return new RectangleImage();
+    }
+
+    public AbstractShape getSquareDefault(boolean square) {
+        return new RectangleImage(80.0);
     }
 
     @Override

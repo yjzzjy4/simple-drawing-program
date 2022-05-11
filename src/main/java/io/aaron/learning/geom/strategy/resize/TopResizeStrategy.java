@@ -1,7 +1,7 @@
 package io.aaron.learning.geom.strategy.resize;
 
-import io.aaron.learning.geom.BoundsImage;
-import io.aaron.learning.geom.impl.BoundsPoint;
+import io.aaron.learning.geom.decorator.ShapeImageBoundsDecorator;
+import io.aaron.learning.geom.shape.BoundsPoint;
 import io.aaron.learning.geom.strategy.resize.base.VerticalResizeStrategy;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -13,18 +13,17 @@ import javafx.scene.input.MouseEvent;
  */
 public class TopResizeStrategy implements VerticalResizeStrategy {
     @Override
-    public EventHandler<? super MouseEvent> handle(BoundsPoint point, BoundsImage bounds) {
+    public EventHandler<? super MouseEvent> handle(BoundsPoint point, ShapeImageBoundsDecorator bounds) {
         return event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                System.out.println("TOP");
-                Node container = bounds.getParent().getContainer();
-                double height = bounds.getParent().getHeight();
+                Node container = bounds.getContainer();
+                double height = bounds.getHeight();
                 double offsetY = event.getY();
-                double baseY = (bounds.getHandlers().get(BoundsImage.Handler.BOTTOM).getCanvas().getHeight() +
-                        bounds.getHandlers().get(BoundsImage.Handler.BOTTOM).getCanvas().getLayoutY() * 2) / 2;
+                double originHeight = (bounds.getHandlers().get(ShapeImageBoundsDecorator.Handler.BOTTOM).getCanvas().getHeight() +
+                        bounds.getHandlers().get(ShapeImageBoundsDecorator.Handler.BOTTOM).getCanvas().getLayoutY() * 2) / 2;
 
                 // mirror flip;
-                if (container.getTranslateY() == baseY) {
+                if (container.getTranslateY() == originHeight) {
                     // flip back;
                     if (offsetY < 0) {
                         container.translateYProperty().set(container.getTranslateY() + offsetY);
@@ -33,9 +32,9 @@ public class TopResizeStrategy implements VerticalResizeStrategy {
                 } else {
                     double allOffsetY = container.getTranslateY() + offsetY;
                     // mirror flip;
-                    if (allOffsetY > baseY) {
-                        height = allOffsetY - baseY;
-                        container.translateYProperty().set(baseY);
+                    if (allOffsetY > originHeight) {
+                        height = allOffsetY - originHeight;
+                        container.translateYProperty().set(originHeight);
                     } else {
                         height = height - offsetY;
                         container.translateYProperty().set(allOffsetY);

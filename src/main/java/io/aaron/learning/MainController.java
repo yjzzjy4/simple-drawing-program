@@ -1,10 +1,14 @@
 package io.aaron.learning;
 
-import io.aaron.learning.geom.AbstractShape;
-import io.aaron.learning.geom.impl.OvalImage;
-import io.aaron.learning.geom.impl.RectangleImage;
+import com.jfoenix.controls.JFXButton;
+import io.aaron.learning.geom.base.AbstractShape;
+import io.aaron.learning.geom.decorator.ShapeImageBoundsDecorator;
+import io.aaron.learning.geom.shape.OvalImage;
+import io.aaron.learning.geom.shape.RectangleImage;
+import io.aaron.learning.manage.FactoryProvider;
 import io.aaron.learning.manage.ShapeHolder;
 import io.aaron.learning.manage.ShapePrototypeHolder;
+import io.aaron.learning.manage.factory.base.AbstractShapeFactory;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -18,7 +22,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,8 +54,7 @@ public class MainController {
     @FXML
     private Pane canvas;
 
-    //    @FXML
-    //    public ShapeHolder canvas;
+    public static final AbstractShapeFactory shapeFactory = FactoryProvider.provideAbstractShapeFactory();
 
     public void initialize() {
         menubar.getMenus().addAll(new Menu("File"), new Menu("Edit"), new Menu("View"), new Menu("Arrange"));
@@ -63,42 +65,40 @@ public class MainController {
         shapePickerScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.15));
         shapePickerScroll.setMinViewportWidth(100);
         shapePicker.prefWidthProperty().bind(shapePickerScroll.prefViewportWidthProperty());
-        Button drawRect = new Button();
-        drawRect.setGraphic(new FontIcon("di-java:32"));
-        drawRect.setOnAction(value -> {
-            RectangleImage rectangle = new RectangleImage();
-            Double offsetX = rectangle.getWidth() / 2;
-            Double offsetY = rectangle.getHeight() / 2;
-            Double centerX = canvasScroll.widthProperty().divide(2).doubleValue();
-            Double centerY = canvasScroll.heightProperty().divide(2).doubleValue();
-            Node node = rectangle.getContainer();
-            node.setLayoutX(centerX - offsetX);
-            node.setLayoutY(centerY - offsetY);
-            ShapeHolder.add(rectangle);
-            canvas.getChildren().add(node);
-
-        });
-        Button drawCircle = new Button();
-        drawCircle.setGraphic(new FontIcon("di-java:32"));
-        drawCircle.setOnAction(value -> {
-            OvalImage circle = new OvalImage();
-            Double offsetX = circle.getWidth() / 2;
-            Double offsetY = circle.getHeight() / 2;
-            Double centerX = canvasScroll.widthProperty().divide(2).doubleValue();
-            Double centerY = canvasScroll.heightProperty().divide(2).doubleValue();
-            Node node = circle.getContainer();
-            node.setLayoutX(centerX - offsetX);
-            node.setLayoutY(centerY - offsetY);
-            ShapeHolder.add(circle);
-            canvas.getChildren().add(node);
-        });
-        shapePicker.getChildren().addAll(drawRect, drawCircle);
         ShapePrototypeHolder.PROTOTYPES.values().forEach(o -> {
             Canvas canvas = o.getCanvas();
-            double scaleFactor = canvas.getWidth() > canvas.getHeight() ? 40.0 / canvas.getWidth() :
-                    40.0 / canvas.getHeight();
-            canvas.scaleXProperty().set(scaleFactor);
-            canvas.scaleYProperty().set(scaleFactor);
+            double scaleFactor = canvas.getWidth() > canvas.getHeight() ? 45.0 / canvas.getWidth() :
+                    45.0 / canvas.getHeight();
+            o.setWidth(scaleFactor * o.getWidth());
+            o.setHeight(scaleFactor * o.getHeight());
+            o.draw();
+            Button btn = new JFXButton();
+            btn.setMaxWidth(50.0);
+            btn.setMaxHeight(50.0);
+            btn.setGraphic(o.draw());
+            btn.setOnAction(value -> {
+                AbstractShape shape;
+                if(o instanceof RectangleImage && ((RectangleImage) o).getSquare()) {
+                    shape = shapeFactory.getBoundsShape(((RectangleImage) o).getSquareDefault(true));
+                }
+                else if(o instanceof OvalImage && ((OvalImage) o).getCircle()) {
+                    shape = shapeFactory.getBoundsShape(((OvalImage) o).getCircleDefault(true));
+                }
+                else {
+                    shape = shapeFactory.getBoundsShape(o.getDefault());
+                }
+                Double offsetX = shape.getWidth() / 2;
+                Double offsetY = shape.getHeight() / 2;
+                Double centerX = canvasScroll.widthProperty().divide(2).doubleValue();
+                Double centerY = canvasScroll.heightProperty().divide(2).doubleValue();
+                Node node = shape.getContainer();
+                node.setLayoutX(centerX - offsetX);
+                node.setLayoutY(centerY - offsetY);
+                ShapeHolder.add(shape);
+                this.canvas.getChildren().add(node);
+                // todo: apply properties to the default shape
+            });
+            shapePicker.getChildren().add(btn);
         });
         shapePicker.getChildren()
                    .addAll(ShapePrototypeHolder.PROTOTYPES.values()
@@ -129,15 +129,14 @@ public class MainController {
         });
 
         // 取消所有选中;
-//        canvasScroll.setOnMouseClicked(event -> {
-//            if(event.getButton() == MouseButton.PRIMARY) {
-//                ShapeHolder.getAllShapes().forEach(o -> {
-//                    o.setSelected(false);
-//                    o.getBounds().hide();
-//                });
-//            }
-//            event.consume();
-//        });
-
+        canvasScroll.setOnMouseClicked(event -> {
+            if(event.getButton() == MouseButton.PRIMARY) {
+                ShapeHolder.getAllShapes().forEach(o -> {
+                    o.setSelected(false);
+                    ((ShapeImageBoundsDecorator) o).hide();
+                });
+            }
+            event.consume();
+        });
     }
 }

@@ -1,13 +1,16 @@
 package io.aaron.learning.manage;
 
-import io.aaron.learning.geom.AbstractShape;
-import io.aaron.learning.geom.impl.OvalImage;
-import io.aaron.learning.geom.impl.RectangleImage;
+import io.aaron.learning.geom.base.AbstractShape;
+import io.aaron.learning.geom.shape.OvalImage;
+import io.aaron.learning.geom.shape.RectangleImage;
+import io.aaron.learning.manage.factory.base.AbstractShapeFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ShapePrototypeHolder {
+    public static final AbstractShapeFactory shapeFactory = FactoryProvider.provideAbstractShapeFactory();
+
     public static final Map<ShapeType, AbstractShape> PROTOTYPES = new ConcurrentHashMap<>();
 
     public static void add(ShapeType type, AbstractShape shape) {
@@ -15,9 +18,9 @@ public class ShapePrototypeHolder {
     }
 
     static {
-        PROTOTYPES.put(ShapeType.RECTANGLE, new RectangleImage());
-        PROTOTYPES.put(ShapeType.SQUARE, new RectangleImage(true));
-        PROTOTYPES.put(ShapeType.OVAL, new OvalImage());
-        PROTOTYPES.put(ShapeType.CIRCLE, new OvalImage(true));
+        PROTOTYPES.put(ShapeType.RECTANGLE, shapeFactory.getRectangle());
+        PROTOTYPES.put(ShapeType.SQUARE, shapeFactory.getSquare());
+        PROTOTYPES.put(ShapeType.OVAL, shapeFactory.getOval());
+        PROTOTYPES.put(ShapeType.CIRCLE, shapeFactory.getCircle());
     }
 }
