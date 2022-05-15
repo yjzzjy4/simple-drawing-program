@@ -1,6 +1,7 @@
 package io.aaron.learning.geom.decorator.base;
 
 import io.aaron.learning.geom.base.AbstractShape;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,11 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public abstract class AbstractShapeDecorator extends AbstractShape {
     private AbstractShape shape;
+    private Group container;
+
+    {
+        container = new Group();
+    }
 
     protected AbstractShapeDecorator(AbstractShape shape) {
         this.shape = shape;
@@ -22,5 +28,6 @@ public abstract class AbstractShapeDecorator extends AbstractShape {
         setFilled(false);
         setStrokePaint(Color.web("#00b8f0"));
         setFillPaint(Color.web("#00b8f0"));
+        container.getChildren().add(shape.getCanvas());
     }
 }

@@ -6,28 +6,26 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
-@ToString
 @EqualsAndHashCode(callSuper = true)
-public class RectangleImage extends AbstractShape {
+public class EllipseImage extends AbstractShape {
 
-    public RectangleImage() {
+    public EllipseImage() {
         super(120.0, 60.0);
     }
 
-    public RectangleImage(RectangleImage rect) {
-        super(rect);
+    public EllipseImage(EllipseImage ellipse) {
+        super(ellipse);
     }
 
-    public RectangleImage(double width, double height) {
+    public EllipseImage(double width, double height) {
         super(width, height);
     }
 
-    public RectangleImage(double x, double y, double width, double height) {
+    public EllipseImage(double x, double y, double width, double height) {
         super(x, y, width, height);
     }
 
@@ -35,19 +33,20 @@ public class RectangleImage extends AbstractShape {
     public Node draw() {
         GraphicsContext context = ((Canvas) super.draw()).getGraphicsContext2D();
         if(getFilled()) {
-            context.fillRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
+            context.fillOval(this.getLineWidth(), this.getLineWidth(), getWidth(), getHeight());
         }
-        context.strokeRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
+        context.strokeOval(this.getLineWidth(), this.getLineWidth(), getWidth(), getHeight());
         return getCanvas();
     }
 
     @Override
     public boolean contains(double x, double y) {
-        return x >= 0 && x <= getWidth() && y >= 0 && y <= getHeight();
+        double offsetX = getWidth() / 2, offsetY = getHeight() / 2;
+        return (Math.pow((x - offsetX) / offsetX, 2) + Math.pow((y - offsetY) / offsetY, 2)) <= 1;
     }
 
     @Override
-    public RectangleImage clone() {
-        return new RectangleImage(this);
+    public EllipseImage clone() {
+        return new EllipseImage(this);
     }
 }

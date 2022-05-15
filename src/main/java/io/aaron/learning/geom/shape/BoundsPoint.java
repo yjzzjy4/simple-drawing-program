@@ -3,13 +3,13 @@ package io.aaron.learning.geom.shape;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-public class BoundsPoint extends OvalImage {
+public class BoundsPoint extends CircleImage {
+
     public BoundsPoint() {
-        super(10.0);
-        init();
+        this(10.0);
     }
 
-    public BoundsPoint(Double diameter) {
+    public BoundsPoint(double diameter) {
         super(diameter);
         init();
     }
@@ -18,6 +18,6 @@ public class BoundsPoint extends OvalImage {
         Paint paint = Color.web("#00b8f0");
         setStrokePaint(paint);
         setFillPaint(paint);
-        applyChange();
+        draw();
     }
 }

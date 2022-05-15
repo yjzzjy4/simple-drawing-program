@@ -2,16 +2,13 @@ package io.aaron.learning.geom.strategy.resize;
 
 import io.aaron.learning.geom.decorator.ShapeImageBoundsDecorator;
 import io.aaron.learning.geom.shape.BoundsPoint;
-import io.aaron.learning.geom.strategy.resize.base.VerticalResizeStrategy;
+import io.aaron.learning.geom.strategy.resize.base.ResizeStrategy;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-/**
- * @author Aaron
- * @since 2022/04/27 11:29:45
- */
-public class TopResizeStrategy implements VerticalResizeStrategy {
+public class EqualProportionalTopResizeStrategy implements ResizeStrategy {
+
     @Override
     public EventHandler<? super MouseEvent> handle(BoundsPoint point, ShapeImageBoundsDecorator bounds) {
         return event -> {
@@ -19,29 +16,39 @@ public class TopResizeStrategy implements VerticalResizeStrategy {
                 Node container = bounds.getContainer();
                 double height = bounds.getHeight();
                 double offsetY = event.getY();
+                double originalWidth = getOriginalWidth(bounds);
                 double originalHeight = getOriginalHeight(bounds);
+                double proportion = originalWidth / originalHeight;
 
                 // mirror flip;
                 if (container.getTranslateY() == originalHeight) {
                     // flip back;
                     if (offsetY < 0) {
+                        container.translateXProperty().set(0.0);
                         container.translateYProperty().set(originalHeight + offsetY);
                     }
-                    height = offsetY;
+                    else {
+                        container.translateXProperty().set(-1 * offsetY * proportion);
+                    }
+                    height = Math.abs(offsetY);
+                    point.getCanvas().translateXProperty().set(originalWidth / -2 + height * proportion / 2);
                 }
                 else {
                     double allOffsetY = container.getTranslateY() + offsetY;
                     // mirror flip;
                     if (allOffsetY > originalHeight) {
                         height = allOffsetY - originalHeight;
+                        container.translateXProperty().set(-1 * height * proportion);
                         container.translateYProperty().set(originalHeight);
+                        point.getCanvas().translateXProperty().set(originalWidth / -2 + height * proportion / 2);
                     }
                     else {
                         height = height - offsetY;
                         container.translateYProperty().set(allOffsetY);
+                        point.getCanvas().translateXProperty().set(point.getCanvas().getTranslateX() + offsetY * proportion / -2);
                     }
                 }
-                resizeHeight(bounds, height);
+                resize(bounds, height * proportion, height);
             }
             event.consume();
         };

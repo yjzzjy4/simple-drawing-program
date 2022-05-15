@@ -12,6 +12,26 @@ import javafx.scene.input.MouseEvent;
 public interface ResizeStrategy {
     EventHandler<? super MouseEvent> handle(BoundsPoint point, ShapeImageBoundsDecorator bounds);
 
+    /**
+     * Get width of bounds before resizing.
+     *
+     * @return bounds width.
+     */
+    default double getOriginalWidth(ShapeImageBoundsDecorator bounds) {
+        BoundsPoint point = bounds.getHandlers().get(ShapeImageBoundsDecorator.Handler.BOTTOM_RIGHT);
+        return Math.abs(point.getCanvas().getLayoutX() + point.getWidth() / 2);
+    }
+
+    /**
+     * Get height of bounds before resizing.
+     *
+     * @return bounds height.
+     */
+    default double getOriginalHeight(ShapeImageBoundsDecorator bounds) {
+        BoundsPoint point = bounds.getHandlers().get(ShapeImageBoundsDecorator.Handler.BOTTOM_RIGHT);
+        return Math.abs(point.getCanvas().getLayoutY() + point.getHeight() / 2);
+    }
+
     default void resizeWidth(ShapeImageBoundsDecorator bounds, Double width) {
         resize(bounds, width, bounds.getShape().getHeight());
     }

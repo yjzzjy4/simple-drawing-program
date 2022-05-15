@@ -3,12 +3,11 @@ package io.aaron.learning;
 import com.jfoenix.controls.JFXButton;
 import io.aaron.learning.geom.base.AbstractShape;
 import io.aaron.learning.geom.decorator.ShapeImageBoundsDecorator;
-import io.aaron.learning.geom.shape.OvalImage;
-import io.aaron.learning.geom.shape.RectangleImage;
+import io.aaron.learning.geom.decorator.base.AbstractShapeDecorator;
 import io.aaron.learning.manage.FactoryProvider;
 import io.aaron.learning.manage.ShapeHolder;
 import io.aaron.learning.manage.ShapePrototypeHolder;
-import io.aaron.learning.manage.factory.base.AbstractShapeFactory;
+import io.aaron.learning.manage.factory.base.AbstractShapeDecoratorFactory;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -54,14 +53,14 @@ public class MainController {
     @FXML
     private Pane canvas;
 
-    public static final AbstractShapeFactory shapeFactory = FactoryProvider.provideAbstractShapeFactory();
+    public static final AbstractShapeDecoratorFactory shapeFactory = FactoryProvider.provideAbstractShapeFactory();
 
     public void initialize() {
         menubar.getMenus().addAll(new Menu("File"), new Menu("Edit"), new Menu("View"), new Menu("Arrange"));
 
         shortcuts.setPrefHeight(30);
 
-        // 左侧边栏;
+        // left panel.
         shapePickerScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.15));
         shapePickerScroll.setMinViewportWidth(100);
         shapePicker.prefWidthProperty().bind(shapePickerScroll.prefViewportWidthProperty());
@@ -71,64 +70,54 @@ public class MainController {
                     45.0 / canvas.getHeight();
             o.setWidth(scaleFactor * o.getWidth());
             o.setHeight(scaleFactor * o.getHeight());
-            o.draw();
             Button btn = new JFXButton();
             btn.setMaxWidth(50.0);
             btn.setMaxHeight(50.0);
             btn.setGraphic(o.draw());
             btn.setOnAction(value -> {
-                AbstractShape shape;
-                if(o instanceof RectangleImage && ((RectangleImage) o).getSquare()) {
-                    shape = shapeFactory.getBoundsShape(((RectangleImage) o).getSquareDefault(true));
-                }
-                else if(o instanceof OvalImage && ((OvalImage) o).getCircle()) {
-                    shape = shapeFactory.getBoundsShape(((OvalImage) o).getCircleDefault(true));
-                }
-                else {
-                    shape = shapeFactory.getBoundsShape(o.getDefault());
-                }
-                Double offsetX = shape.getWidth() / 2;
-                Double offsetY = shape.getHeight() / 2;
+                AbstractShapeDecorator boundedShape = shapeFactory.getBoundsShapeDecorator(o.clone());
+                Double offsetX = boundedShape.getWidth() / 2;
+                Double offsetY = boundedShape.getHeight() / 2;
                 Double centerX = canvasScroll.widthProperty().divide(2).doubleValue();
                 Double centerY = canvasScroll.heightProperty().divide(2).doubleValue();
-                Node node = shape.getContainer();
+                Node node = boundedShape.getContainer();
                 node.setLayoutX(centerX - offsetX);
                 node.setLayoutY(centerY - offsetY);
-                ShapeHolder.add(shape);
+                ShapeHolder.add(boundedShape);
                 this.canvas.getChildren().add(node);
-                // todo: apply properties to the default shape
+                // todo: apply properties to the default boundedShape
             });
             shapePicker.getChildren().add(btn);
         });
         shapePicker.getChildren()
                    .addAll(ShapePrototypeHolder.PROTOTYPES.values()
                                                           .stream()
-                                                          .map(AbstractShape::getContainer)
+                                                          .map(AbstractShape::getCanvas)
                                                           .collect(Collectors.toList()));
 
-        // 画板区域;
+        // canvas area.
         canvas.prefWidthProperty().bind(canvasScroll.widthProperty());
         canvas.prefHeightProperty().bind(canvasScroll.heightProperty());
         canvasScroll.setMinViewportWidth(600);
 
-        // 右侧边栏;
+        // right panel.
         propEditorScroll.prefViewportWidthProperty().bind(root.widthProperty().multiply(0.15));
         propEditorScroll.setMinViewportWidth(100);
         propEditor.prefWidthProperty().bind(propEditorScroll.prefViewportWidthProperty());
 
-        // 删除图形;
+        // delete shapes.
         root.setOnKeyPressed(event -> {
             if(event.getCode().equals(KeyCode.DELETE)) {
-                List<AbstractShape> selected = ShapeHolder.getAllShapes()
+                List<AbstractShapeDecorator> selected = ShapeHolder.getAllShapes()
                                                           .stream()
                                                           .filter(AbstractShape::getSelected)
                                                           .collect(Collectors.toList());
-                canvas.getChildren().removeAll(selected.stream().map(AbstractShape::getContainer).collect(Collectors.toList()));
+                canvas.getChildren().removeAll(selected.stream().map(AbstractShapeDecorator::getContainer).collect(Collectors.toList()));
                 ShapeHolder.getAllShapes().removeAll(selected);
             }
         });
 
-        // 取消所有选中;
+        // unselect all shapes.
         canvasScroll.setOnMouseClicked(event -> {
             if(event.getButton() == MouseButton.PRIMARY) {
                 ShapeHolder.getAllShapes().forEach(o -> {

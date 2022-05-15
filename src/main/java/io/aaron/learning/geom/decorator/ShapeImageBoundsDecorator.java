@@ -1,12 +1,10 @@
 package io.aaron.learning.geom.decorator;
 
 import io.aaron.learning.geom.base.AbstractShape;
+import io.aaron.learning.geom.base.EqualProportional;
 import io.aaron.learning.geom.decorator.base.AbstractShapeDecorator;
 import io.aaron.learning.geom.shape.BoundsPoint;
-import io.aaron.learning.geom.strategy.resize.BottomResizeStrategy;
-import io.aaron.learning.geom.strategy.resize.LeftResizeStrategy;
-import io.aaron.learning.geom.strategy.resize.RightResizeStrategy;
-import io.aaron.learning.geom.strategy.resize.TopResizeStrategy;
+import io.aaron.learning.geom.strategy.resize.*;
 import io.aaron.learning.manage.ShapeHolder;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -33,15 +31,16 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
 
     public enum Handler {
         /**
-         * 8 handlers;
+         * 8 handlers.
          */
-        TOP(HorizontalResize.FORBID, VerticalResize.TOP), TOP_LEFT(HorizontalResize.LEFT,
-                                                                   VerticalResize.TOP), TOP_RIGHT(
-                HorizontalResize.RIGHT, VerticalResize.TOP), BOTTOM(HorizontalResize.FORBID,
-                                                                    VerticalResize.BOTTOM), BOTTOM_LEFT(
-                HorizontalResize.LEFT, VerticalResize.BOTTOM), BOTTOM_RIGHT(HorizontalResize.RIGHT,
-                                                                            VerticalResize.BOTTOM), LEFT(
-                HorizontalResize.LEFT, VerticalResize.FORBID), RIGHT(HorizontalResize.RIGHT, VerticalResize.FORBID);
+        TOP(HorizontalResize.FORBID, VerticalResize.TOP),
+        TOP_RIGHT(HorizontalResize.RIGHT, VerticalResize.TOP),
+        RIGHT(HorizontalResize.RIGHT, VerticalResize.FORBID),
+        BOTTOM_RIGHT(HorizontalResize.RIGHT, VerticalResize.BOTTOM),
+        BOTTOM(HorizontalResize.FORBID, VerticalResize.BOTTOM),
+        BOTTOM_LEFT(HorizontalResize.LEFT, VerticalResize.BOTTOM),
+        LEFT(HorizontalResize.LEFT, VerticalResize.FORBID),
+        TOP_LEFT(HorizontalResize.LEFT, VerticalResize.TOP);
 
         private final HorizontalResize horizontalResize;
         private final VerticalResize verticalResize;
@@ -52,16 +51,10 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
         }
 
         public enum HorizontalResize {
-            /**
-             * aha
-             */
             LEFT, RIGHT, FORBID
         }
 
         public enum VerticalResize {
-            /**
-             * aha
-             */
             TOP, BOTTOM, FORBID
         }
     }
@@ -73,24 +66,22 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
 
     @Override
     public Node draw() {
-        Canvas canvas = getCanvas();
-        if(canvas == null) {
-            setCanvas(new Canvas(getWidth() + 2 * getLineWidth(), getHeight() + 2 * getLineWidth()));
-            canvas = getCanvas();
-        }
-        else {
-            canvas.setHeight(getHeight() + 2 * getLineWidth());
-            canvas.setWidth(getWidth() + 2 * getLineWidth());
-        }
-        GraphicsContext context = canvas.getGraphicsContext2D();
-        context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        context.setFill(getFillPaint());
-        context.setStroke(getStrokePaint());
+        GraphicsContext context = ((Canvas) super.draw()).getGraphicsContext2D();
         if(getFilled()) {
             context.fillRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
         }
         context.strokeRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
-        return canvas;
+        return getCanvas();
+    }
+
+    @Override
+    public boolean contains(double x, double y) {
+        return getShape().contains(x, y);
+    }
+
+    @Override
+    public AbstractShape clone() {
+        return null;
     }
 
     private void hideBoundsExcept(@NonNull BoundsPoint point) {
@@ -115,7 +106,7 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     }
 
     /**
-     * place all handlers in the container;
+     * Place all handlers in the container.
      */
     private void placeHandlers() {
         bindHandlerPosition(Handler.TOP, getShape().getWidth() / 2, 0.0);
@@ -129,11 +120,11 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     }
 
     /**
-     * bind handler to the corner position;
+     * Bind handler to the corner position.
      *
      * @param handler handler point;
      * @param offsetX horizontal offset;
-     * @param offsetY vertical offset;
+     * @param offsetY vertical offset.
      */
     private void bindHandlerPosition(Handler handler, double offsetX, double offsetY) {
         BoundsPoint point = handlers.get(handler);
@@ -145,34 +136,62 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     }
 
     /**
-     * (logically) bind handler point event;
+     * (Logically) bind handler point event.
      */
     private void bindHandlerMouseEvent() {
         Arrays.stream(Handler.values()).forEach(handler -> {
             BoundsPoint point = handlers.get(handler);
             Cursor cursor = Util.getCursorSupplier(handler).get();
-            if(handler.verticalResize == Handler.VerticalResize.TOP) {
-                setHandlerMouseEvent(point, cursor, new TopResizeStrategy().handle(point, this));
+            if(getShape() instanceof EqualProportional) {
+                // equal proportional resize strategy set;
+                switch(handler) {
+                    case TOP:
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalTopResizeStrategy().handle(point, this));
+                        break;
+                    case TOP_RIGHT:
+                        break;
+                    case RIGHT:
+                        setHandlerMouseEvent(point, cursor, (new EqualProportionalRightResizeStrategy().handle(point, this)));
+                        break;
+                    case BOTTOM_RIGHT:
+                        break;
+                    case BOTTOM:
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalBottomResizeStrategy().handle(point, this));
+                        break;
+                    case BOTTOM_LEFT:
+                        break;
+                    case LEFT:
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalLeftResizeStrategy().handle(point, this));
+                        break;
+                    case TOP_LEFT:
+                        break;
+                }
             }
-            else if(handler.verticalResize == Handler.VerticalResize.BOTTOM) {
-                setHandlerMouseEvent(point, cursor, new BottomResizeStrategy().handle(point, this));
-            }
+            else {
+                // normal resize strategy set;
+                if(handler.verticalResize == Handler.VerticalResize.TOP) {
+                    setHandlerMouseEvent(point, cursor, new TopResizeStrategy().handle(point, this));
+                }
+                else if(handler.verticalResize == Handler.VerticalResize.BOTTOM) {
+                    setHandlerMouseEvent(point, cursor, new BottomResizeStrategy().handle(point, this));
+                }
 
-            if(handler.horizontalResize == Handler.HorizontalResize.LEFT) {
-                setHandlerMouseEvent(point, cursor, new LeftResizeStrategy().handle(point, this));
-            }
-            else if(handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
-                setHandlerMouseEvent(point, cursor, new RightResizeStrategy().handle(point, this));
+                if(handler.horizontalResize == Handler.HorizontalResize.LEFT) {
+                    setHandlerMouseEvent(point, cursor, new LeftResizeStrategy().handle(point, this));
+                }
+                else if(handler.horizontalResize == Handler.HorizontalResize.RIGHT) {
+                    setHandlerMouseEvent(point, cursor, new RightResizeStrategy().handle(point, this));
+                }
             }
         });
     }
 
     /**
-     * (actually) bind handler point event;
+     * (Actually) bind handler point event.
      *
      * @param point       handler point;
      * @param cursor      mouse style when hovering;
-     * @param dragHandler drag handler;
+     * @param dragHandler drag handler.
      */
     private void setHandlerMouseEvent(@NonNull BoundsPoint point, Cursor cursor,
                                       EventHandler<? super MouseEvent> dragHandler) {
@@ -194,22 +213,23 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
 
     private void init() {
         // 8 handlers;
-        handlers.put(Handler.TOP, new BoundsPoint(10.0));
-        handlers.put(Handler.TOP_RIGHT, new BoundsPoint(10.0));
-        handlers.put(Handler.RIGHT, new BoundsPoint(10.0));
-        handlers.put(Handler.BOTTOM_RIGHT, new BoundsPoint(10.0));
-        handlers.put(Handler.BOTTOM, new BoundsPoint(10.0));
-        handlers.put(Handler.BOTTOM_LEFT, new BoundsPoint(10.0));
-        handlers.put(Handler.LEFT, new BoundsPoint(10.0));
-        handlers.put(Handler.TOP_LEFT, new BoundsPoint(10.0));
+        handlers.put(Handler.TOP, new BoundsPoint());
+        handlers.put(Handler.TOP_RIGHT, new BoundsPoint());
+        handlers.put(Handler.RIGHT, new BoundsPoint());
+        handlers.put(Handler.BOTTOM_RIGHT, new BoundsPoint());
+        handlers.put(Handler.BOTTOM, new BoundsPoint());
+        handlers.put(Handler.BOTTOM_LEFT, new BoundsPoint());
+        handlers.put(Handler.LEFT, new BoundsPoint());
+        handlers.put(Handler.TOP_LEFT, new BoundsPoint());
         bindHandlerMouseEvent();
         placeHandlers();
-
-        getContainer().getChildren().add(getShape().getContainer());
 
         // drag;
         getContainer().setOnMouseDragged(event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+                if(!getShape().contains(event.getX(), event.getY())) {
+                    return;
+                }
                 getContainer().layoutXProperty().set(getContainer().getLayoutX() + event.getX() - getWidth() / 2);
                 getContainer().layoutYProperty().set(getContainer().getLayoutY() + event.getY() - getHeight() / 2);
             }
@@ -218,6 +238,9 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
         // show bounds with handlers;
         getContainer().setOnMouseClicked(event -> {
             if(event.getButton() == MouseButton.PRIMARY) {
+                if(!getShape().contains(event.getX(), event.getY())) {
+                    return;
+                }
                 // ctrl key can unselect a shape;
                 if(event.isControlDown()) {
                     setSelected(!getSelected());
@@ -246,7 +269,7 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     }
 
     /**
-     * show bounds with 8 handler points for the bound shape;
+     * Show bounds with 8 handler points for the bound shape.
      */
     public void show() {
         getContainer().getChildren().add(draw());
@@ -255,7 +278,7 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     }
 
     /**
-     * hide bounds with 8 handler points for the bound shape;
+     * Hide bounds with 8 handler points for the bound shape.
      */
     public void hide() {
         getContainer().getChildren().remove(getCanvas());
