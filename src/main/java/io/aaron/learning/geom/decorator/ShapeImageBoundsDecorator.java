@@ -2,6 +2,7 @@ package io.aaron.learning.geom.decorator;
 
 import io.aaron.learning.geom.base.AbstractShape;
 import io.aaron.learning.geom.base.EqualProportional;
+import io.aaron.learning.geom.base.ShapeStyleProperty;
 import io.aaron.learning.geom.decorator.base.AbstractShapeDecorator;
 import io.aaron.learning.geom.shape.BoundsPoint;
 import io.aaron.learning.geom.strategy.resize.*;
@@ -66,10 +67,8 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
 
     @Override
     public Node draw() {
+        setOpacity(1.0);
         GraphicsContext context = ((Canvas) super.draw()).getGraphicsContext2D();
-        if(getFilled()) {
-            context.fillRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
-        }
         context.strokeRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
         return getCanvas();
     }
@@ -82,6 +81,12 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     @Override
     public AbstractShape clone() {
         return null;
+    }
+
+    @Override
+    public void applyStyle(ShapeStyleProperty style) {
+        getShape().applyStyle(style);
+        draw();
     }
 
     private void hideBoundsExcept(@NonNull BoundsPoint point) {
@@ -227,9 +232,9 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
         // drag;
         getContainer().setOnMouseDragged(event -> {
             if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                if(!getShape().contains(event.getX(), event.getY())) {
-                    return;
-                }
+//                if(!getShape().contains(event.getX(), event.getY())) {
+//                    return;
+//                }
                 getContainer().layoutXProperty().set(getContainer().getLayoutX() + event.getX() - getWidth() / 2);
                 getContainer().layoutYProperty().set(getContainer().getLayoutY() + event.getY() - getHeight() / 2);
             }

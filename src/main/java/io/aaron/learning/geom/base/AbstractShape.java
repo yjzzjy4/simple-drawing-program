@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 @Data
 @SuperBuilder
@@ -30,17 +30,18 @@ public abstract class AbstractShape implements Cloneable {
     private Paint fillPaint;
     private Double[] lineDashes;
     private Double lineWidth;
+    private Double opacity;
     private Canvas canvas;
 
     {
-        zIndex = 0;
         rotation = 0.0;
         filled = true;
         selected = false;
         strokePaint = Color.web("#000");
         fillPaint = Color.web("#fff");
         lineWidth = 1.0;
-        lineDashes = null;
+        lineDashes = new Double[]{};
+        opacity = 1.0;
         canvas = new Canvas();
     }
 
@@ -54,13 +55,14 @@ public abstract class AbstractShape implements Cloneable {
         width = shape.getWidth();
         height = shape.getHeight();
         rotation = shape.getRotation();
-        zIndex = shape.getZIndex() + 1;
+        zIndex = null;
         filled = shape.getFilled();
         selected = shape.getSelected();
         strokePaint = shape.getStrokePaint();
         fillPaint = shape.getFillPaint();
-        lineDashes = Objects.isNull(shape.getLineDashes()) ? null : shape.getLineDashes().clone();
+        lineDashes = shape.getLineDashes().clone();
         lineWidth = shape.getLineWidth();
+        opacity = shape.getOpacity();
         draw();
     }
 
@@ -79,33 +81,29 @@ public abstract class AbstractShape implements Cloneable {
     }
 
     public Node draw() {
-        if(canvas == null) {
-            canvas = new Canvas(getWidth() + 2 * getLineWidth(), getHeight() + 2 * getLineWidth());
-        }
-        else {
-            canvas.setHeight(getHeight() + 2 * getLineWidth());
-            canvas.setWidth(getWidth() + 2 * getLineWidth());
-        }
+        canvas.setWidth(width + 2 * lineWidth);
+        canvas.setHeight(height + 2 * lineWidth);
+        canvas.setOpacity(opacity);
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        context.setFill(getFillPaint());
-        context.setStroke(getStrokePaint());
+        context.setLineDashes(Arrays.stream(lineDashes).mapToDouble(Double::doubleValue).toArray());
+        context.setFill(fillPaint);
+        context.setStroke(strokePaint);
         return canvas;
     }
 
-    public void applyChange(ShapeProperty props) {
-        x = props.getX();
-        y = props.getY();
-        width = props.getWidth();
-        height = props.getHeight();
-        rotation = props.getRotation();
-        zIndex = props.getZIndex() + 1;
-        filled = props.getFilled();
-        selected = props.getSelected();
-        strokePaint = props.getStrokePaint();
-        fillPaint = props.getFillPaint();
-        lineDashes = Objects.isNull(props.getLineDashes()) ? null : props.getLineDashes().clone();
-        lineWidth = props.getLineWidth();
+    /**
+     * Apply style property to shape, and redraw it.
+     *
+     * @param style shape style.
+     */
+    public void applyStyle(ShapeStyleProperty style) {
+        filled = style.getFilled();
+        selected = style.getSelected();
+        strokePaint = style.getStrokePaint();
+        fillPaint = style.getFillPaint();
+        lineDashes = style.getLineDashes().clone();
+        lineWidth = style.getLineWidth();
         draw();
     }
 

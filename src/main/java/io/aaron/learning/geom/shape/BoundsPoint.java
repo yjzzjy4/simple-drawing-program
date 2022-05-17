@@ -18,6 +18,7 @@ public class BoundsPoint extends CircleImage {
         Paint paint = Color.web("#00b8f0");
         setStrokePaint(paint);
         setFillPaint(paint);
+        setOpacity(1.0);
         draw();
     }
 }

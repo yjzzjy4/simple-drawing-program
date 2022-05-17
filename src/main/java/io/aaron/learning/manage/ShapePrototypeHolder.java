@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ShapePrototypeHolder {
     public static final Map<ShapeType, AbstractShape> PROTOTYPES = new ConcurrentHashMap<>();
 
-    public static void add(ShapeType type, AbstractShape shape) {
-        PROTOTYPES.put(type, shape);
+    public static AbstractShape getShape(ShapeType type) {
+        return PROTOTYPES.get(type).clone();
     }
 
     static {

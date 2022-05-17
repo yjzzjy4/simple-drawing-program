@@ -24,10 +24,12 @@ public abstract class AbstractShapeDecorator extends AbstractShape {
         setY(shape.getY());
         setWidth(shape.getWidth());
         setHeight(shape.getHeight());
+        setLineDashes(new Double[] {5d});
         setLineWidth(1.0);
         setFilled(false);
         setStrokePaint(Color.web("#00b8f0"));
         setFillPaint(Color.web("#00b8f0"));
+        setOpacity(1.0);
         container.getChildren().add(shape.getCanvas());
     }
 }
