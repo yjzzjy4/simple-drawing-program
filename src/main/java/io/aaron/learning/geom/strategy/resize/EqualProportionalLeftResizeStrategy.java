@@ -27,10 +27,10 @@ public class EqualProportionalLeftResizeStrategy implements ResizeStrategy {
                         container.translateYProperty().set(0.0);
                     }
                     else {
-                        container.translateYProperty().set(-1 * offsetX * proportion);
+                        container.translateYProperty().set(-offsetX * proportion);
                     }
                     width = Math.abs(offsetX);
-                    point.getCanvas().translateYProperty().set(originalHeight / -2 + width * proportion / 2);
+                    point.getCanvas().translateYProperty().set(-originalHeight / 2 + width * proportion / 2);
                 }
                 else {
                     double allOffsetX = container.getTranslateX() + offsetX;
@@ -38,13 +38,13 @@ public class EqualProportionalLeftResizeStrategy implements ResizeStrategy {
                     if (allOffsetX > originalWidth) {
                         width = allOffsetX - originalWidth;
                         container.translateXProperty().set(originalWidth);
-                        container.translateYProperty().set(-1 * width * proportion);
-                        point.getCanvas().translateYProperty().set(originalHeight / -2 + width * proportion / 2);
+                        container.translateYProperty().set(-width * proportion);
+                        point.getCanvas().translateYProperty().set(-originalHeight / 2 + width * proportion / 2);
                     }
                     else {
                         width = width - offsetX;
                         container.translateXProperty().set(allOffsetX);
-                        point.getCanvas().translateYProperty().set(point.getCanvas().getTranslateY() + offsetX * proportion / -2);
+                        point.getCanvas().translateYProperty().set(point.getCanvas().getTranslateY() - offsetX * proportion / 2);
                     }
                 }
                 resize(bounds, width, width * proportion);

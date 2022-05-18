@@ -34,20 +34,20 @@ public abstract class AbstractShape implements Cloneable {
     private Canvas canvas;
 
     {
-        rotation = 0.0;
+        x = 0d;
+        y = 0d;
+        rotation = 0d;
         filled = true;
         selected = false;
         strokePaint = Color.web("#000");
         fillPaint = Color.web("#fff");
-        lineWidth = 1.0;
+        lineWidth = 1d;
         lineDashes = new Double[]{};
-        opacity = 1.0;
+        opacity = 1d;
         canvas = new Canvas();
     }
 
-    protected AbstractShape() {
-        this(0.0, 0.0, 80.0, 80.0);
-    }
+    protected AbstractShape() {}
 
     protected AbstractShape(AbstractShape shape) {
         x = shape.getX();
@@ -67,7 +67,7 @@ public abstract class AbstractShape implements Cloneable {
     }
 
     protected AbstractShape(Double width, Double height) {
-        this(0.0, 0.0, width, height);
+        this(0d, 0d, width, height);
     }
 
     protected AbstractShape(Double x, Double y, Double width, Double height) {
@@ -85,7 +85,7 @@ public abstract class AbstractShape implements Cloneable {
         canvas.setHeight(height + 2 * lineWidth);
         canvas.setOpacity(opacity);
         GraphicsContext context = canvas.getGraphicsContext2D();
-        context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        context.clearRect(0d, 0d, canvas.getWidth(), canvas.getHeight());
         context.setLineDashes(Arrays.stream(lineDashes).mapToDouble(Double::doubleValue).toArray());
         context.setFill(fillPaint);
         context.setStroke(strokePaint);

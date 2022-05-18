@@ -23,28 +23,23 @@ public class EqualProportionalTopLeftResizeStrategy implements ResizeStrategy {
                 if (container.getTranslateY() == originalHeight) {
                     // flip back;
                     if (offsetY < 0) {
-                        container.translateXProperty().set(0.0);
+                        container.translateXProperty().set(originalWidth + offsetY * proportion);
                         container.translateYProperty().set(originalHeight + offsetY);
                     }
-                    else {
-                        container.translateXProperty().set(-1 * offsetY * proportion);
-                    }
                     height = Math.abs(offsetY);
-                    point.getCanvas().translateXProperty().set(originalWidth / -2 + height * proportion / 2);
                 }
                 else {
                     double allOffsetY = container.getTranslateY() + offsetY;
                     // mirror flip;
                     if (allOffsetY > originalHeight) {
                         height = allOffsetY - originalHeight;
-                        container.translateXProperty().set(-1 * height * proportion);
+                        container.translateXProperty().set(originalWidth);
                         container.translateYProperty().set(originalHeight);
-                        point.getCanvas().translateXProperty().set(originalWidth / -2 + height * proportion / 2);
                     }
                     else {
                         height = height - offsetY;
+                        container.translateXProperty().set(allOffsetY * proportion);
                         container.translateYProperty().set(allOffsetY);
-                        point.getCanvas().translateXProperty().set(point.getCanvas().getTranslateX() + offsetY * proportion / -2);
                     }
                 }
                 resize(bounds, height * proportion, height);

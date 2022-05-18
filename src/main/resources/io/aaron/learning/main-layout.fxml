@@ -28,7 +28,7 @@
     </right>
     <center>
         <ScrollPane fx:id="canvasScroll">
-            <Pane fx:id="canvas"/>
+            <Pane fx:id="mainContainer"/>
         </ScrollPane>
     </center>
 </BorderPane>

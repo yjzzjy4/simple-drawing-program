@@ -31,7 +31,7 @@ public class EqualProportionalBottomResizeStrategy implements ResizeStrategy {
                         container.translateYProperty().set(offsetY);
                     }
                     height = Math.abs(offsetY);
-                    point.getCanvas().translateXProperty().set(originalWidth / -2 + height * proportion / 2);
+                    point.getCanvas().translateXProperty().set(-originalWidth / 2 + height * proportion / 2);
                     point.getCanvas().translateYProperty().set(height - originalHeight);
                 }
                 else {
@@ -41,7 +41,7 @@ public class EqualProportionalBottomResizeStrategy implements ResizeStrategy {
                         container.translateXProperty().set(allOffsetY * proportion);
                         container.translateYProperty().set(allOffsetY);
                         height = Math.abs(allOffsetY);
-                        point.getCanvas().translateXProperty().set(originalWidth / -2 + height * proportion / 2);
+                        point.getCanvas().translateXProperty().set(-originalWidth / 2 + height * proportion / 2);
                         point.getCanvas().translateYProperty().set(height - originalHeight);
                     }
                     else {

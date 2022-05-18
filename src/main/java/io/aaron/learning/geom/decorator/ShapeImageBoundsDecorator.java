@@ -4,6 +4,7 @@ import io.aaron.learning.geom.base.AbstractShape;
 import io.aaron.learning.geom.base.EqualProportional;
 import io.aaron.learning.geom.base.ShapeStyleProperty;
 import io.aaron.learning.geom.decorator.base.AbstractShapeDecorator;
+import io.aaron.learning.geom.decorator.base.Selectable;
 import io.aaron.learning.geom.shape.BoundsPoint;
 import io.aaron.learning.geom.strategy.resize.*;
 import io.aaron.learning.manage.ShapeHolder;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
+public class ShapeImageBoundsDecorator extends AbstractShapeDecorator implements Selectable {
     private final Map<Handler, BoundsPoint> handlers = new HashMap<>();
 
     public enum Handler {
@@ -154,21 +155,25 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
                         setHandlerMouseEvent(point, cursor, new EqualProportionalTopResizeStrategy().handle(point, this));
                         break;
                     case TOP_RIGHT:
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalTopRightResizeStrategy().handle(point, this));
                         break;
                     case RIGHT:
-                        setHandlerMouseEvent(point, cursor, (new EqualProportionalRightResizeStrategy().handle(point, this)));
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalRightResizeStrategy().handle(point, this));
                         break;
                     case BOTTOM_RIGHT:
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalBottomRightResizeStrategy().handle(point, this));
                         break;
                     case BOTTOM:
                         setHandlerMouseEvent(point, cursor, new EqualProportionalBottomResizeStrategy().handle(point, this));
                         break;
                     case BOTTOM_LEFT:
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalBottomLeftResizeStrategy().handle(point, this));
                         break;
                     case LEFT:
                         setHandlerMouseEvent(point, cursor, new EqualProportionalLeftResizeStrategy().handle(point, this));
                         break;
                     case TOP_LEFT:
+                        setHandlerMouseEvent(point, cursor, new EqualProportionalTopLeftResizeStrategy().handle(point, this));
                         break;
                 }
             }
@@ -203,6 +208,7 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
         point.getCanvas().setOnMouseEntered(event -> point.getCanvas().setCursor(cursor));
         point.getCanvas().setOnMouseExited(event -> point.getCanvas().setCursor(Cursor.DEFAULT));
         point.getCanvas().setOnMousePressed(event -> hideBoundsExcept(point));
+        // resize finished;
         point.getCanvas().setOnMouseReleased(event -> {
             Node container = getContainer();
             setX(container.getLayoutX() + container.getTranslateX());
@@ -235,8 +241,10 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
 //                if(!getShape().contains(event.getX(), event.getY())) {
 //                    return;
 //                }
-                getContainer().layoutXProperty().set(getContainer().getLayoutX() + event.getX() - getWidth() / 2);
-                getContainer().layoutYProperty().set(getContainer().getLayoutY() + event.getY() - getHeight() / 2);
+                setX(getContainer().getLayoutX() + event.getX() - getWidth() / 2);
+                setY(getContainer().getLayoutY() + event.getY() - getHeight() / 2);
+                getContainer().layoutXProperty().set(getX());
+                getContainer().layoutYProperty().set(getY());
             }
         });
 
@@ -261,7 +269,7 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
                 ShapeHolder.getAllShapes().forEach(shape -> {
                     if(!this.equals(shape)) {
                         shape.setSelected(false);
-                        ((ShapeImageBoundsDecorator) shape).hide();
+                        ((Selectable) shape).hide();
                     }
                 });
                 if(!getSelected()) {
@@ -276,6 +284,7 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     /**
      * Show bounds with 8 handler points for the bound shape.
      */
+    @Override
     public void show() {
         getContainer().getChildren().add(draw());
         List<Node> nodes = handlers.values().stream().map(BoundsPoint::getCanvas).collect(Collectors.toList());
@@ -285,6 +294,7 @@ public class ShapeImageBoundsDecorator extends AbstractShapeDecorator {
     /**
      * Hide bounds with 8 handler points for the bound shape.
      */
+    @Override
     public void hide() {
         getContainer().getChildren().remove(getCanvas());
         List<Node> nodes = handlers.values().stream().map(BoundsPoint::getCanvas).collect(Collectors.toList());

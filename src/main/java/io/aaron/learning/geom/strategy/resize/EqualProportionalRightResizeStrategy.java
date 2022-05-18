@@ -32,7 +32,7 @@ public class EqualProportionalRightResizeStrategy implements ResizeStrategy {
                     }
                     width = Math.abs(offsetX);
                     point.getCanvas().translateXProperty().set(width - originalWidth);
-                    point.getCanvas().translateYProperty().set(originalHeight / -2 + width * proportion / 2);
+                    point.getCanvas().translateYProperty().set(-originalHeight / 2 + width * proportion / 2);
                 }
                 else {
                     double allOffsetX = width + offsetX;
@@ -42,7 +42,7 @@ public class EqualProportionalRightResizeStrategy implements ResizeStrategy {
                         container.translateYProperty().set(allOffsetX * proportion);
                         width = Math.abs(allOffsetX);
                         point.getCanvas().translateXProperty().set(width - originalWidth);
-                        point.getCanvas().translateYProperty().set(originalHeight / -2 + width * proportion / 2);
+                        point.getCanvas().translateYProperty().set(-originalHeight / 2 + width * proportion / 2);
                     }
                     else {
                         point.getCanvas().translateXProperty().set(point.getCanvas().getTranslateX() + offsetX);
