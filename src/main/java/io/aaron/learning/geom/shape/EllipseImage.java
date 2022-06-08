@@ -32,10 +32,12 @@ public class EllipseImage extends AbstractShape {
     @Override
     public Node draw() {
         GraphicsContext context = ((Canvas) super.draw()).getGraphicsContext2D();
-        if(getFilled()) {
+        if(isFilled()) {
             context.fillOval(this.getLineWidth(), this.getLineWidth(), getWidth(), getHeight());
         }
-        context.strokeOval(this.getLineWidth(), this.getLineWidth(), getWidth(), getHeight());
+        if(isLined()) {
+            context.strokeOval(this.getLineWidth(), this.getLineWidth(), getWidth(), getHeight());
+        }
         return getCanvas();
     }
 

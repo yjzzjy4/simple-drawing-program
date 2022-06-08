@@ -34,10 +34,12 @@ public class RectangleImage extends AbstractShape {
     @Override
     public Node draw() {
         GraphicsContext context = ((Canvas) super.draw()).getGraphicsContext2D();
-        if(getFilled()) {
+        if(isFilled()) {
             context.fillRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
         }
-        context.strokeRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
+        if(isLined()) {
+            context.strokeRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
+        }
         return getCanvas();
     }
 

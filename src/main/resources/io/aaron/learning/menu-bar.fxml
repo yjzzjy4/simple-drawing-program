@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+
+<?import javafx.scene.input.KeyCodeCombination?>
+<MenuBar xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:controller="io.aaron.learning.MenuBarController">
+
+    <Menu fx:id="fileMenu" text="File">
+        <MenuItem fx:id="newMenuItem" text="New...">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="openMenuItem" text="Open...">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <SeparatorMenuItem/>
+        <MenuItem fx:id="saveMenuItem" text="Save">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <SeparatorMenuItem/>
+        <MenuItem text="Quit"/>
+    </Menu>
+
+    <Menu fx:id="editMenu" text="Edit">
+        <MenuItem fx:id="undoMenuItem" text="Undo" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="redoMenuItem" text="Redo" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="DOWN" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <SeparatorMenuItem/>
+        <MenuItem fx:id="cutMenuItem" text="Cut" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="copyMenuItem" text="Copy" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="pasteMenuItem" text="Paste" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="V" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="deleteMenuItem" text="Delete" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="DELETE" control="UP" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <SeparatorMenuItem/>
+        <MenuItem fx:id="duplicateMenuItem" text="Duplicate" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <SeparatorMenuItem/>
+        <MenuItem fx:id="selectAllMenuItem" text="Select All">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="selectNoneMenuItem" text="Select None" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="DOWN" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+    </Menu>
+
+    <Menu fx:id="arrangeMenu" text="Arrange">
+        <MenuItem fx:id="toFrontMenuItem" text="To Front" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="DOWN" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="toBackMenuItem" text="To Back" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="B" control="DOWN" meta="UP" shift="DOWN" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="toForwardMenuItem" text="Bring Forward" disable="true"/>
+        <MenuItem fx:id="toBackwardMenuItem" text="Send Backward" disable="true"/>
+        <SeparatorMenuItem/>
+        <MenuItem fx:id="groupMenuItem" text="Group" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+        <MenuItem fx:id="ungroupMenuItem" text="Ungroup" disable="true">
+            <accelerator>
+                <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="DOWN" shortcut="UP"/>
+            </accelerator>
+        </MenuItem>
+    </Menu>
+</MenuBar>

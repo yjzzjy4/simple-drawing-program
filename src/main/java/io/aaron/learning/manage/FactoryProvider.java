@@ -1,12 +1,12 @@
 package io.aaron.learning.manage;
 
-import io.aaron.learning.manage.factory.ShapeImageDecoratorFactory;
-import io.aaron.learning.manage.factory.base.AbstractShapeDecoratorFactory;
+import io.aaron.learning.manage.factory.ShapeImageFactory;
+import io.aaron.learning.manage.factory.base.AbstractShapeFactory;
 
 public class FactoryProvider {
-    public static final AbstractShapeDecoratorFactory shapeFactory = new ShapeImageDecoratorFactory();
+    public static final AbstractShapeFactory SHAPE_IMAGE_FACTORY = new ShapeImageFactory();
 
-    public static AbstractShapeDecoratorFactory provideAbstractShapeFactory() {
-        return shapeFactory;
+    public static AbstractShapeFactory provideShapeImageFactory() {
+        return SHAPE_IMAGE_FACTORY;
     }
 }

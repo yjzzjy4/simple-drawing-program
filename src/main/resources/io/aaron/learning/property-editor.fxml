@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Label?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXColorPicker?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.scene.control.Tab?>
+<FlowPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="io.aaron.learning.PropertyEditorController" alignment="CENTER">
+
+    <JFXTabPane fx:id="propertyPane">
+        <Tab text="Style">
+            <GridPane fx:id="styleGridPane" alignment="CENTER" vgap="20" maxWidth="Infinity" maxHeight="Infinity">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                    <ColumnConstraints halignment="RIGHT"/>
+                </columnConstraints>
+
+                <JFXRadioButton fx:id="fillRadio" text="Fill" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <JFXColorPicker fx:id="fillColorPicker" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <JFXRadioButton fx:id="lineRadio" text="Line" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <JFXColorPicker fx:id="lineColorPicker" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Opacity" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <JFXTextField fx:id="opacityField" text="opacity" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            </GridPane>
+        </Tab>
+
+        <Tab text="Arrange">
+            <GridPane fx:id="arrangeGridPane" alignment="CENTER" vgap="20" maxWidth="Infinity" maxHeight="Infinity">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                    <ColumnConstraints halignment="RIGHT"/>
+                </columnConstraints>
+                <Label text="Top" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <JFXTextField fx:id="topField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Left" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <JFXTextField fx:id="leftField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="width" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <JFXTextField fx:id="widthField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="height" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <JFXTextField fx:id="heightField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            </GridPane>
+        </Tab>
+    </JFXTabPane>
+</FlowPane>

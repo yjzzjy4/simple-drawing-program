@@ -1,14 +1,11 @@
 package io.aaron.learning.geom.decorator.base;
 
 import io.aaron.learning.geom.base.AbstractShape;
-import io.aaron.learning.geom.shape.ShapeGroup;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -23,34 +20,24 @@ public abstract class AbstractShapeDecorator extends AbstractShape {
 
     protected AbstractShapeDecorator(AbstractShape shape) {
         this.shape = shape;
-        setX(shape.getX());
-        setY(shape.getY());
-        setWidth(shape.getWidth());
-        setHeight(shape.getHeight());
+        xProperty().bindBidirectional(shape.xProperty());
+        yProperty().bindBidirectional(shape.yProperty());
+        widthProperty().bindBidirectional(shape.widthProperty());
+        heightProperty().bindBidirectional(shape.heightProperty());
         setLineDashes(new Double[] {5d});
         setLineWidth(1.0);
         setFilled(false);
         setStrokePaint(Color.web("#00b8f0"));
         setFillPaint(Color.web("#00b8f0"));
         setOpacity(1.0);
-        if(shape instanceof ShapeGroup) {
-            container.getChildren()
-                     .addAll(((ShapeGroup) shape).getChildren().stream().map(AbstractShape::draw).collect(Collectors.toList()));
-        }
-        else {
-            container.getChildren().add(shape.draw());
-        }
+//        if(shape instanceof ShapeImageGroup) {
+//            container.getChildren()
+//                     .addAll(((ShapeImageGroup) shape).getChildren().stream().map(AbstractShape::draw).collect(Collectors.toList()));
+//        }
+//        else {
+////            container.getChildren().add(shape.draw());
+//            shape.draw();
+//        }
+        shape.draw();
     }
-
-//    @Override
-//    public void setX(Double x) {
-//        super.setX(x);
-//        shape.setX(x);
-//    }
-//
-//    @Override
-//    public void setY(Double y) {
-//        super.setY(y);
-//        shape.setY(y);
-//    }
 }

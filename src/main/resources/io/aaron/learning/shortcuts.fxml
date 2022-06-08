@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.control.Separator?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="io.aaron.learning.ShortcutsController" prefHeight="30">
+
+    <JFXButton fx:id="saveButton">
+        <graphic>
+            <FontIcon iconLiteral="mdi2c-content-save" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+
+    <Separator orientation="VERTICAL"/>
+
+    <JFXButton fx:id="undoButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2u-undo" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+    <JFXButton fx:id="redoButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2r-redo" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+
+    <Separator orientation="VERTICAL"/>
+
+    <JFXButton fx:id="deleteButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2d-delete" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+
+    <Separator orientation="VERTICAL"/>
+
+    <JFXButton fx:id="toFrontButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2a-arrange-bring-to-front" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+    <JFXButton fx:id="toBackButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2a-arrange-send-to-back" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+
+    <Separator orientation="VERTICAL"/>
+
+    <JFXButton fx:id="backgroundColorButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2f-format-color-fill" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+    <JFXButton fx:id="strokeColorButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2d-draw" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+
+    <Separator orientation="VERTICAL"/>
+
+    <JFXButton fx:id="groupButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2g-group" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+    <JFXButton fx:id="ungroupButton" disable="true">
+        <graphic>
+            <FontIcon iconLiteral="mdi2u-ungroup" iconSize="24" iconColor="#646464"/>
+        </graphic>
+    </JFXButton>
+</HBox>
