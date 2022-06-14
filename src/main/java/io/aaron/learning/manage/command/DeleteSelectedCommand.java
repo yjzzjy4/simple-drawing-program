@@ -1,16 +1,16 @@
 package io.aaron.learning.manage.command;
 
 import io.aaron.learning.geom.base.AbstractShape;
+import io.aaron.learning.geom.base.AbstractShapeGroup;
 import io.aaron.learning.geom.decorator.base.AbstractBoundDecorator;
-import io.aaron.learning.geom.decorator.base.AbstractShapeDecorator;
 import io.aaron.learning.manage.ShapeHolder;
 import io.aaron.learning.manage.command.base.AbstractCommand;
 import javafx.scene.Node;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DeleteSelectedCommand implements AbstractCommand {
 
@@ -26,10 +26,17 @@ public class DeleteSelectedCommand implements AbstractCommand {
 
     @Override
     public void execute() {
-        container.removeAll(bounds.stream()
-                                  .flatMap(b -> Stream.of(b.getShape().getCanvas(), b.getContainer()))
-                                  .collect(Collectors.toList()));
-        shapeHolder.getShapes().removeAll(bounds.stream().map(AbstractShapeDecorator::getShape).collect(Collectors.toList()));
+        for(AbstractBoundDecorator b : bounds) {
+            if(b.getShape() instanceof AbstractShapeGroup) {
+                container.removeAll(((AbstractShapeGroup) b.getShape()).getChildren()
+                                                            .stream()
+                                                            .map(AbstractShape::getCanvas)
+                                                            .collect(Collectors.toList()));
+                shapeHolder.getShapes().removeAll(((AbstractShapeGroup) b.getShape()).getChildren());
+            }
+            container.removeAll(Arrays.asList(b.getShape().getCanvas(), b.getContainer()));
+            shapeHolder.getShapes().remove(b.getShape());
+        }
         shapeHolder.getBounds().clear();
     }
 
@@ -38,7 +45,12 @@ public class DeleteSelectedCommand implements AbstractCommand {
         Comparator<AbstractShape> cmp = Comparator.comparingInt(AbstractShape::getVerticalIndex);
         List<AbstractShape> shapes = shapeHolder.getShapes();
         List<AbstractBoundDecorator> bounds = shapeHolder.getBounds();
-        shapes.addAll(this.bounds.stream().map(AbstractShapeDecorator::getShape).collect(Collectors.toList()));
+        for(AbstractBoundDecorator b : this.bounds) {
+            if(b.getShape() instanceof AbstractShapeGroup) {
+                shapeHolder.getShapes().addAll(((AbstractShapeGroup) b.getShape()).getChildren());
+            }
+            shapeHolder.getShapes().add(b.getShape());
+        }
         bounds.clear();
         bounds.addAll(this.bounds);
         shapes.sort(cmp);

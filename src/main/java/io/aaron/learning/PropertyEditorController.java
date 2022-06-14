@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
+import io.aaron.learning.geom.base.ShapeStyleProperty;
 import io.aaron.learning.geom.decorator.base.AbstractBoundDecorator;
 import io.aaron.learning.manage.ShapeHolder;
 import io.aaron.learning.manage.ShapePreviewHolder;
@@ -13,11 +14,16 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PropertyEditorController implements AbstractObserver {
 
     private ShapeHolder shapeHolder;
+
+    private ShapeStyleProperty styleProperty = ShapePreviewHolder.DEFAULT_STYLE;
+
+    private final List<Double[]> lineDashes = new ArrayList<>();
 
     @FXML
     public JFXTabPane propertyPane;
@@ -62,14 +68,39 @@ public class PropertyEditorController implements AbstractObserver {
 
     private void init() {
         arrangeGridPane.setDisable(true);
-        fillRadio.setSelected(ShapePreviewHolder.DEFAULT_STYLE.getFilled());
-        lineRadio.setSelected(ShapePreviewHolder.DEFAULT_STYLE.getLined());
-        fillColorPicker.setValue((Color) ShapePreviewHolder.DEFAULT_STYLE.getFillPaint());
-        lineColorPicker.setValue((Color) ShapePreviewHolder.DEFAULT_STYLE.getStrokePaint());
+        styleProperty = ShapePreviewHolder.DEFAULT_STYLE;
+        fillRadio.setSelected(styleProperty.getFilled());
+        lineRadio.setSelected(styleProperty.getLined());
+        fillColorPicker.setValue((Color) styleProperty.getFillPaint());
+        lineColorPicker.setValue((Color) styleProperty.getStrokePaint());
     }
 
     public void initialize() {
         init();
+
+        fillRadio.setOnAction(event -> {
+            fillRadio.setSelected(!styleProperty.getFilled());
+            styleProperty.setFilled(!styleProperty.getFilled());
+            if(!styleProperty.getFilled()) {
+                fillColorPicker.setDisable(true);
+            }
+            else {
+                fillColorPicker.setDisable(false);
+                // TODO: change the fill color of selected shapes;
+            }
+        });
+
+        lineRadio.setOnAction(event -> {
+            lineRadio.setSelected(!styleProperty.getLined());
+            styleProperty.setLined(!styleProperty.getLined());
+            if(!styleProperty.getLined()) {
+                lineColorPicker.setDisable(true);
+            }
+            else {
+                lineColorPicker.setDisable(false);
+                // TODO: change the line color of selected shapes;
+            }
+        });
     }
 
     @Override
@@ -85,11 +116,13 @@ public class PropertyEditorController implements AbstractObserver {
 
             AbstractBoundDecorator top = bounds.get(selectedCount - 1);
 
+            styleProperty = ShapeStyleProperty.extractFrom(top.getShape());
+
             arrangeGridPane.setDisable(false);
-            fillRadio.setSelected(top.getShape().isFilled());
-            lineRadio.setSelected(top.getShape().isLined());
-            fillColorPicker.setValue((Color) top.getShape().getFillPaint());
-            lineColorPicker.setValue((Color) top.getShape().getStrokePaint());
+            fillRadio.setSelected(styleProperty.getFilled());
+            lineRadio.setSelected(styleProperty.getLined());
+            fillColorPicker.setValue((Color) styleProperty.getFillPaint());
+            lineColorPicker.setValue((Color) styleProperty.getStrokePaint());
 
             if(selectedCount == 1) {
                 topField.setDisable(false);

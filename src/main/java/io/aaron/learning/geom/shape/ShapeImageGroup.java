@@ -3,8 +3,6 @@ package io.aaron.learning.geom.shape;
 import io.aaron.learning.geom.base.AbstractShape;
 import io.aaron.learning.geom.base.AbstractShapeGroup;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -36,12 +34,10 @@ public class ShapeImageGroup extends AbstractShapeGroup {
 
     @Override
     public Node draw() {
-//        GraphicsContext context = ((Canvas) super.draw()).getGraphicsContext2D();
-//        context.strokeRect(getLineWidth(), getLineWidth(), getWidth(), getHeight());
         for(AbstractShape shape: getChildren()) {
             shape.draw();
         }
-        return getCanvas();
+        return super.draw();
     }
 
     @Override

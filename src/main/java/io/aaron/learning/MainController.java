@@ -48,7 +48,6 @@ public class MainController {
     @FXML
     private MenuBarController menubarController;
 
-
     @FXML
     private HBox shortcuts;
     @FXML
@@ -93,23 +92,6 @@ public class MainController {
         for(int i = 0; i < bounds.size(); i++) {
             bounds.get(i).setVerticalIndex(i + shapes.size());
         }
-    }
-
-    /**
-     * Select the designated shape.
-     *
-     */
-    public void selectOneShape(AbstractShape shape) {
-
-    }
-
-    /**
-     * Select the designated shapes.
-     *
-     * @param shapes targets;
-     */
-    public void selectSomeShapes(List<AbstractShape> shapes) {
-
     }
 
     public void selectAllShapes() {
@@ -616,6 +598,10 @@ public class MainController {
 
         // drag is over;
         canvasScroll.setOnMouseReleased(event -> {
+            if(event.getX() == DragHelper.originalCX && event.getY() == DragHelper.originalCY) {
+                event.consume();
+                return;
+            }
             if(DragHelper.dragType == DragHelper.DragType.MOVE) {
                 AbstractCommand cmd = SimpleCommandFactory.getMoveSelectedCommand(DragHelper.exactTarget, DragHelper.targets,
                                                               DragHelper.originalX, DragHelper.originalY,
@@ -648,6 +634,8 @@ public class MainController {
                  */
                 bounds.removeAll(DragHelper.targets);
                 bounds.addAll(DragHelper.duplicates);
+
+                // todo: Add new duplicate drag command here;
             }
             else if(DragHelper.dragType == DragHelper.DragType.RESIZE) {
                 AbstractCommand cmd = SimpleCommandFactory.getResizeSelectedCommand(DragHelper.exactTarget, DragHelper.targets,
@@ -671,7 +659,8 @@ public class MainController {
     }
 
     public void setStage(@NonNull Stage stage) {
-        Scene scene = stage.getScene();
+        this.stage = stage;
+        Scene scene = this.stage.getScene();
         // select or unselect all shapes;
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if(event.isControlDown()) {
@@ -709,6 +698,5 @@ public class MainController {
                 deleteSelectedShapes();
             }
         });
-        this.stage = stage;
     }
 }

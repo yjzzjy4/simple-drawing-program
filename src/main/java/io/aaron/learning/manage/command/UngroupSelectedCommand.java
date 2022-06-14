@@ -55,7 +55,6 @@ public class UngroupSelectedCommand implements AbstractCommand {
                 results.add(bound);
             }
         }
-        System.out.println(results.size());
         results.sort(Comparator.comparingInt(AbstractShape::getVerticalIndex));
         container.addAll(results.stream()
                                 .map(AbstractBoundDecorator::getContainer)
